@@ -3,7 +3,7 @@ import logger from '../utils/logger';
 
 // Try different backend URLs for better connectivity
 const possibleBaseURLs = [
-    'https://kisansetu-backend-vcuo.onrender.com'
+    "https://kisansetu-backend-vcuo.onrender.com"
 
 ];
 
