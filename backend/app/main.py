@@ -56,7 +56,7 @@ else:
     # Development fallback
     allowed_origins = [
         "https://kisansetu.pages.dev",
-        "https://kisansetu.syanpticpush.indevs.in"
+        "https://kisansetu.synapticpush.indevs.in"
     ]
 
 app.add_middleware(
