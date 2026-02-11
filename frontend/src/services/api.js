@@ -3,9 +3,8 @@ import logger from '../utils/logger';
 
 // Try different backend URLs for better connectivity
 const possibleBaseURLs = [
-    'http://127.0.0.1:8000',
-    'http://localhost:8000',
-    'http://0.0.0.0:8000'
+    'https://kisansetu-backend-vcuo.onrender.com'
+
 ];
 
 // Create an Axios instance with the first available URL
