@@ -2,10 +2,7 @@ import axios from 'axios';
 import logger from '../utils/logger';
 
 // Try different backend URLs for better connectivity
-const possibleBaseURLs = [
-    "https://kisansetu-backend-vcuo.onrender.com"
-
-];
+const possibleBaseURLs = ["https://kisansetu-backend-vcuo.onrender.com"];
 
 // Create an Axios instance with the first available URL
 const api = axios.create({
