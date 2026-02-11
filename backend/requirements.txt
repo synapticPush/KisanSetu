@@ -19,3 +19,5 @@ httpx==0.25.2
 
 # Development dependencies
 python-dotenv==1.0.0
+PyJWT==2.8.0
+
