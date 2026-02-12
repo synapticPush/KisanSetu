@@ -1844,11 +1844,11 @@ const LabourManagement = () => {
                                     <thead className="bg-earth-50">
                                         <tr>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-earth-500 uppercase tracking-wider">{t('groupName')}</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold text-earth-700 uppercase tracking-wider">{t('totalPackets')}</th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-earth-500 uppercase tracking-wider">{t('smallPackets')}</th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-earth-500 uppercase tracking-wider">{t('mediumPackets')}</th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-earth-500 uppercase tracking-wider">{t('largePackets')}</th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-earth-500 uppercase tracking-wider">{t('overlargePackets')}</th>
-                                            <th className="px-4 py-3 text-left text-xs font-bold text-earth-700 uppercase tracking-wider">{t('totalPackets')}</th>
                                             <th className="px-4 py-3 text-left text-xs font-medium text-earth-500 uppercase tracking-wider">{t('notes')}</th>
                                         </tr>
                                     </thead>
@@ -1856,9 +1856,18 @@ const LabourManagement = () => {
                                         {labourGroups.map(group => {
                                             const data = workData[group.id] || { small: 0, medium: 0, large: 0, overlarge: 0, total: 0, notes: '' };
                                             return (
-                                                <tr key={group.id}>
+                                                <tr key={group.id} className="hover:bg-earth-50">
                                                     <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-earth-900">
                                                         {group.group_name}
+                                                    </td>
+                                                    <td className="px-4 py-3 whitespace-nowrap">
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            value={data.total || ''}
+                                                            onChange={(e) => handleWorkDataChange(group.id, 'total', e.target.value)}
+                                                            className="w-24 px-2 py-1 border border-earth-300 rounded focus:ring-2 focus:ring-primary-600 bg-earth-50 font-semibold"
+                                                        />
                                                     </td>
                                                     <td className="px-4 py-3 whitespace-nowrap">
                                                         <input
@@ -1894,15 +1903,6 @@ const LabourManagement = () => {
                                                             value={data.overlarge || ''}
                                                             onChange={(e) => handleWorkDataChange(group.id, 'overlarge', e.target.value)}
                                                             className="w-24 px-2 py-1 border border-earth-300 rounded focus:ring-1 focus:ring-primary-500"
-                                                        />
-                                                    </td>
-                                                    <td className="px-4 py-3 whitespace-nowrap">
-                                                        <input
-                                                            type="number"
-                                                            min="0"
-                                                            value={data.total || ''}
-                                                            onChange={(e) => handleWorkDataChange(group.id, 'total', e.target.value)}
-                                                            className="w-24 px-2 py-1 border border-earth-300 rounded focus:ring-2 focus:ring-primary-600 bg-earth-50 font-semibold"
                                                         />
                                                     </td>
                                                     <td className="px-4 py-3 whitespace-nowrap">

@@ -437,6 +437,7 @@ const translations = {
     borrowingDeletedSuccessfully: 'Borrowing deleted successfully',
     borrowingUpdatedSuccessfully: 'Borrowing updated successfully!',
     borrowingReturnedSuccessfully: 'Borrowing marked as returned and money record created successfully!',
+    year: 'Year',
 
     // Money Records
     moneyRecords: 'Money Records',
@@ -674,6 +675,7 @@ const translations = {
   },
   hi: {
     // App
+    year: 'साल',
     appName: 'किसान सेतु',
     // Navigation
     home: 'होम',
