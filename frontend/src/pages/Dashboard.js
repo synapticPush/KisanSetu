@@ -345,23 +345,35 @@ const Dashboard = () => {
                                 
                                 {/* Additional Details */}
                                 <div className="mt-6 pt-6 border-t-2 border-blue-200 grid grid-cols-2 gap-4">
-                                    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-4 shadow-sm">
-                                        <p className="text-xs text-blue-700 font-bold uppercase mb-1.5">Humidity</p>
-                                        <p className="text-2xl font-extrabold text-earth-900 flex items-center gap-2">
-                                            <span>💧</span>
-                                            <span>{weatherData.current.humidity}%</span>
-                                        </p>
-                                    </div>
-                                    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-4 shadow-sm">
-                                        <p className="text-xs text-blue-700 font-bold uppercase mb-1.5">Wind Speed</p>
-                                        <p className="text-2xl font-extrabold text-earth-900 flex items-center gap-2">
-                                            <span>💨</span>
-                                            <span>{weatherData.current.wind_speed}km/h</span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+    {/* Humidity */}
+    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-4 shadow-sm flex flex-col items-center justify-center text-center">
+        <p className="text-xs text-blue-700 font-bold uppercase mb-2">
+            Humidity
+        </p>
+        <div className="flex items-center justify-center gap-2 text-earth-900">
+            <span className="text-xl">💧</span>
+            <span className="text-xl font-bold whitespace-nowrap">
+                {weatherData.current.humidity}%
+            </span>
+        </div>
+    </div>
+
+    {/* Wind Speed */}
+    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-4 shadow-sm flex flex-col items-center justify-center text-center">
+        <p className="text-xs text-blue-700 font-bold uppercase mb-2">
+            Wind Speed
+        </p>
+        <div className="flex items-center justify-center gap-2 text-earth-900">
+            <span className="text-xl">💨</span>
+            <span className="text-xl font-bold whitespace-nowrap">
+                {weatherData.current.wind_speed} km/h
+            </span>
+        </div>
+    </div>
+</div>
+</div>
+)}
+
 
                         {/* Weather Forecast - Scrollable Cards */}
                         {weatherData?.forecast && (

@@ -400,6 +400,7 @@ const translations = {
     weatherDataFetched: 'Weather data fetched successfully',
 
     // Fields
+    noLabourersInGroup: 'No labourers in this group',
     fieldsManagement: 'Fields Management',
     addNewField: 'Add New Field',
     fieldName: 'Field Name',
@@ -802,6 +803,8 @@ const translations = {
     resumed: 'फिर शुरू',
 
     // Subtitles and Descriptions
+    noLabourGroupsFound: 'कोई श्रम समूह नहीं मिला',
+    noLabourersInGroup: 'इस समूह में कोई मजदूर नहीं है',
     welcomeSubtitle: 'आपके खेत प्रबंधन प्रणाली में आपका स्वागत है',
     dashboardSubtitle: 'अपने खेत के प्रदर्शन और गतिविधियों की निगरानी करें',
     fieldsSubtitle: 'अपने कृषि खेतों और फसलों का प्रबंधन करें',
