@@ -366,7 +366,7 @@ const Dashboard = () => {
                                                     {getWeatherIcon(weather.condition)}
                                                 </div>
                                             </div>
-                                            <p className="text-xs text-earth-600 mb-2 truncate">{weather.condition}</p>
+                                            <p className="text-xs text-earth-600 mb-2 break-words">{weather.condition}</p>
                                             <p className="text-sm font-bold text-earth-900">
                                                 {weather.temp_max}°C
                                             </p>

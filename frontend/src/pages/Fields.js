@@ -412,14 +412,14 @@ const Fields = () => {
                         fields.map((field) => (
                             <div key={field.id} className="card">
                                 <div className="px-6 py-4 border-b border-earth-200">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <h3 className="text-lg font-medium text-earth-900">{field.field_name}</h3>
-                                            <p className="text-sm text-earth-600 mt-1">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0">
+                                        <div className="w-full sm:w-auto">
+                                            <h3 className="text-lg font-medium text-earth-900 break-words">{field.field_name}</h3>
+                                            <p className="text-sm text-earth-600 mt-1 break-words">
                                                 {field.area} acres • {field.location || 'No location'} • {field.year}
                                             </p>
                                         </div>
-                                        <div className="flex space-x-2">
+                                        <div className="flex space-x-2 self-end sm:self-center">
                                             <button
                                                 onClick={() => startEdit(field)}
                                                 className="btn btn-secondary text-sm"

@@ -645,26 +645,26 @@ const LotNumbers = () => {
                                         </div>
                                     </form>
                                 ) : (
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex-1">
-                                            <div className="flex items-center space-x-4">
-                                                <div>
-                                                    <h3 className="text-lg font-medium text-earth-900">{lot.lot_number}</h3>
-                                                    <p className="text-sm text-earth-600">{lot.field_name}</p>
-                                                    <p className="text-xs text-earth-500 mt-1">
+                                    <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-0">
+                                        <div className="flex-1 w-full">
+                                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                                                <div className="w-full sm:w-auto">
+                                                    <h3 className="text-lg font-medium text-earth-900 break-words">{lot.lot_number}</h3>
+                                                    <p className="text-sm text-earth-600 break-words">{lot.field_name}</p>
+                                                    <p className="text-xs text-earth-500 mt-1 break-words">
                                                         S: {lot.small_packets || 0} | M: {lot.medium_packets || 0} | L: {lot.large_packets || 0} | XL: {lot.xlarge_packets || 0}
                                                     </p>
                                                 </div>
-                                                <div className="text-right">
+                                                <div className="text-left sm:text-right w-full sm:w-auto mt-2 sm:mt-0">
                                                     <p className="text-lg font-semibold text-primary-600">{lot.total_packets || 0} {t('packets')}</p>
                                                     <p className="text-sm text-earth-500">{t('storedOn')}: {formatDate(lot.storage_date)}</p>
                                                 </div>
                                             </div>
                                             {lot.notes && (
-                                                <p className="mt-2 text-sm text-gray-600">{t('notes')}: {lot.notes}</p>
+                                                <p className="mt-2 text-sm text-gray-600 break-words">{t('notes')}: {lot.notes}</p>
                                             )}
                                         </div>
-                                        <div className="flex space-x-2 ml-4">
+                                        <div className="flex gap-2 self-end sm:self-center ml-0 sm:ml-4">
                                             <button
                                                 onClick={() => setEditingLot(lot)}
                                                 className="btn btn-secondary btn-sm"

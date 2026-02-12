@@ -23,21 +23,21 @@ export const StatCard = ({
     <div className={`${variantClasses[variant]} cursor-pointer`}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
-          <p className="text-earth-600 text-sm md:text-xs font-medium mb-1 uppercase tracking-wide">
+          <p className="text-earth-600 text-sm md:text-xs font-medium mb-1 uppercase tracking-wide break-words">
             {title}
           </p>
-          <h3 className="text-3xl md:text-2xl font-bold text-earth-900">
+          <h3 className="text-2xl md:text-2xl font-bold text-earth-900 break-words">
             {value}
           </h3>
         </div>
         {icon && (
-          <div className="text-4xl md:text-3xl opacity-20 ml-2">
+          <div className="text-3xl md:text-3xl opacity-20 ml-2 flex-shrink-0">
             {icon}
           </div>
         )}
       </div>
       {subtitle && (
-        <p className="text-earth-600 text-xs md:text-xs">{subtitle}</p>
+        <p className="text-earth-600 text-xs md:text-xs break-words">{subtitle}</p>
       )}
       {change !== null && (
         <div className={`mt-2 text-sm font-semibold ${
@@ -73,22 +73,22 @@ export const DataCard = ({
       className={`card p-4 md:p-5 cursor-pointer transition-all ${statusClasses[status]}`}
       onClick={onClick}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <p className="text-earth-600 text-xs md:text-xs font-semibold uppercase tracking-wide mb-1">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
+        <div className="flex-1 min-w-0 w-full">
+          <p className="text-earth-600 text-xs md:text-xs font-semibold uppercase tracking-wide mb-1 break-words">
             {title}
           </p>
-          <p className="text-2xl md:text-xl font-bold text-earth-900 truncate">
+          <p className="text-xl md:text-xl font-bold text-earth-900 break-words">
             {value}
           </p>
           {subtitle && (
-            <p className="text-earth-500 text-xs md:text-xs mt-1 truncate">
+            <p className="text-earth-500 text-xs md:text-xs mt-1 break-words">
               {subtitle}
             </p>
           )}
         </div>
         {action && (
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 mt-2 sm:mt-0 self-end sm:self-auto">
             {action}
           </div>
         )}

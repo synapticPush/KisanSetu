@@ -435,9 +435,9 @@ const Borrowings = () => {
                         borrowings.map((borrowing) => (
                             <div key={borrowing.id} className="card">
                                 <div className="px-6 py-4 border-b border-earth-200">
-                                    <div className="flex justify-between items-start">
-                                        <div>
-                                            <h3 className="text-lg font-medium text-earth-900">{borrowing.borrower_name}</h3>
+                                    <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0">
+                                        <div className="w-full sm:w-auto">
+                                            <h3 className="text-lg font-medium text-earth-900 break-words">{borrowing.borrower_name}</h3>
                                             <p className="text-sm text-earth-600 mt-1">
                                                 {formatCurrency(borrowing.amount)} • Borrowed on {new Date(borrowing.borrow_date).toLocaleDateString('en-IN')}
                                             </p>
@@ -452,7 +452,7 @@ const Borrowings = () => {
                                                 </p>
                                             )}
                                         </div>
-                                        <div className="flex items-center space-x-2">
+                                        <div className="flex flex-wrap items-center gap-2 self-end sm:self-center">
                                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(borrowing.status)}`}>
                                                 {borrowing.status.charAt(0).toUpperCase() + borrowing.status.slice(1)}
                                             </span>
