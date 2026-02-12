@@ -196,35 +196,37 @@ const Dashboard = () => {
 
                 {/* Main Stats - Mobile Friendly Grid */}
                 <div className="stats-grid mb-6 text-sm md:text-base">
-    <DataCard
-        title={t('totalFields')}
-        value={data.total_fields || 0}
-        icon="🌾"
-        variant="primary"
-        status="active"
-    />
-    <DataCard
-        title={t('totalYield')}
-        value={`${data.total_yield || 0} ${t('packets')}`}
-        icon="📦"
-        variant="secondary"
-        status="active"
-    />
-    <DataCard
-        title={t('laborCost')}
-        value={`₹${data.total_labour_cost || 0}`}
-        icon="👥"
-        variant="warning"
-        status="active"
-    />
-    <DataCard
-        title={t('labourEarnings')}
-        value={`₹${data.total_earnings || 0}`}
-        icon="💰"
-        variant="success"
-        status="active"
-    />
-</div>
+                    <StatCard
+                        title={t('totalFields')}
+                        value={data.total_fields || 0}
+                        icon="🌾"
+                        variant="primary"
+                    />
+                    <StatCard
+                        title={t('totalYieldLabel')}
+                        value={`${data.total_yield || 0} ${t('packets')}`}
+                        icon="📦"
+                        variant="secondary"
+                    />
+                    <StatCard
+                        title={t('totalTransported')}
+                        value={`${data.total_transported || 0} ${t('packets')}`}
+                        icon="🚚"
+                        variant="info"
+                    />
+                    <StatCard
+                        title={t('laborCost')}
+                        value={`₹${data.total_labour_cost || 0}`}
+                        icon="👥"
+                        variant="warning"
+                    />
+                    <StatCard
+                        title={t('labourEarnings')}
+                        value={`₹${data.total_earnings || 0}`}
+                        icon="💰"
+                        variant="success"
+                    />
+                </div>
 
 
                 {/* Potato Types Breakdown - Mobile Optimized */}

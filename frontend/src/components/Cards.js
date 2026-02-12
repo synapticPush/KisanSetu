@@ -17,35 +17,42 @@ export const StatCard = ({
     secondary: 'stat-card-secondary',
     success: 'stat-card-success',
     warning: 'stat-card-warning',
+    info: 'stat-card-info',
   };
 
   return (
-    <div className={`${variantClasses[variant]} cursor-pointer`}>
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-1">
-          <p className="text-earth-600 text-sm md:text-xs font-medium mb-1 uppercase tracking-wide break-words">
-            {title}
-          </p>
-          <h3 className="text-2xl md:text-2xl font-bold text-earth-900 break-words">
-            {value}
-          </h3>
+    <div className={`${variantClasses[variant]} cursor-pointer relative overflow-hidden`}>
+      <div className="flex flex-col h-full justify-between">
+        <div className="flex justify-between items-start">
+           <div>
+              <p className="text-earth-700 text-xs font-bold uppercase tracking-wider mb-2">
+                {title}
+              </p>
+              <h3 className="text-3xl font-extrabold text-earth-900 tracking-tight">
+                {value}
+              </h3>
+           </div>
+           {icon && (
+              <div className="p-3 rounded-xl bg-white/30 backdrop-blur-sm text-2xl shadow-sm">
+                {icon}
+              </div>
+            )}
         </div>
-        {icon && (
-          <div className="text-3xl md:text-3xl opacity-20 ml-2 flex-shrink-0">
-            {icon}
-          </div>
-        )}
+        
+        <div>
+          {subtitle && (
+            <p className="text-earth-600 text-xs font-medium mt-3">{subtitle}</p>
+          )}
+          {change !== null && (
+            <div className={`mt-2 text-sm font-bold flex items-center ${
+              change >= 0 ? 'text-green-700' : 'text-red-700'
+            }`}>
+              <span>{change >= 0 ? '↑' : '↓'}</span>
+              <span className="ml-1">{Math.abs(change)}%</span>
+            </div>
+          )}
+        </div>
       </div>
-      {subtitle && (
-        <p className="text-earth-600 text-xs md:text-xs break-words">{subtitle}</p>
-      )}
-      {change !== null && (
-        <div className={`mt-2 text-sm font-semibold ${
-          change >= 0 ? 'text-green-600' : 'text-red-600'
-        }`}>
-          {change >= 0 ? '+' : ''}{change}%
-        </div>
-      )}
     </div>
   );
 };

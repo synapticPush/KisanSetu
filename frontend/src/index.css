@@ -51,7 +51,7 @@
 
   /* Stat Card - For Dashboard metrics */
   .stat-card {
-    @apply bg-gradient-to-br rounded-lg p-4 md:p-6 shadow-md border border-opacity-30 transition-all duration-200 card-hover;
+    @apply bg-gradient-to-br rounded-xl p-4 md:p-6 shadow-lg border border-opacity-40 transition-all duration-200 card-hover;
   }
 
   .stat-card-primary {
@@ -68,6 +68,10 @@
 
   .stat-card-warning {
     @apply stat-card from-amber-50 to-amber-100 border-amber-200;
+  }
+
+  .stat-card-info {
+    @apply stat-card from-blue-50 to-blue-100 border-blue-200;
   }
 
   /* Input Fields - Mobile Friendly */
