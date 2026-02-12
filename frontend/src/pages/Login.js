@@ -57,13 +57,13 @@ const Login = ({ setIsAuthenticated }) => {
             if (error.response?.data?.detail) {
                 setError(error.response.data.detail);
             } else if (error.response?.status === 401) {
-                setError('Invalid username or password');
+                setError(t('errorInvalidCredentials'));
             } else if (error.response?.status === 500) {
-                setError('Server error. Please try again later.');
+                setError(t('errorServerError'));
             } else if (error.code === 'NETWORK_ERROR' || !error.response) {
-                setError('Network error. Please check your connection.');
+                setError(t('errorNetworkError'));
             } else {
-                setError('Login failed. Please try again.');
+                setError(t('errorLoginFailed'));
             }
         } finally {
             setLoading(false);

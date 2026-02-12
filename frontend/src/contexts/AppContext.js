@@ -221,6 +221,7 @@ const translations = {
     signInToAccount: 'Sign in to your account',
     welcomeBack: 'Welcome back! Please enter your details.',
     createYourAccount: 'Create your account',
+    joinKisanSetu: 'Join KisanSetu to start managing your farm efficiently',
     joinFarmManager: 'Join FarmManager to start managing your farm efficiently',
     dontHaveAccount: "Don't have an account?",
     createOneHere: 'Create one here',
@@ -231,6 +232,21 @@ const translations = {
     password: 'Password',
     confirmPassword: 'Confirm Password',
     createAccount: 'Create Account',
+    
+    // Auth Error Messages
+    errorPasswordLength: 'Password must be at least 8 characters long',
+    errorPasswordUppercase: 'Password must contain at least one uppercase letter',
+    errorPasswordLowercase: 'Password must contain at least one lowercase letter',
+    errorPasswordNumber: 'Password must contain at least one number',
+    errorUsernameLength: 'Username must be 3-50 characters long',
+    errorUsernameFormat: 'Username can only contain letters, numbers, and underscores',
+    errorPasswordsNoMatch: 'Passwords do not match',
+    errorUsernameExists: 'Username already exists or invalid input',
+    errorServerError: 'Server error. Please try again later.',
+    errorRegistrationFailed: 'Registration failed. Please try again.',
+    errorInvalidCredentials: 'Invalid username or password',
+    errorNetworkError: 'Network error. Please check your connection.',
+    errorLoginFailed: 'Login failed. Please try again.',
 
     // Additional Labour Management Keys
     labourGroupDetails: 'Labour Group Details',
@@ -803,6 +819,7 @@ const translations = {
     resumed: 'फिर शुरू',
 
     // Subtitles and Descriptions
+    usernameExists: 'यह उपयोगकर्ता नाम पहले से मौजूद है',
     noLabourGroupsFound: 'कोई श्रम समूह नहीं मिला',
     noLabourersInGroup: 'इस समूह में कोई मजदूर नहीं है',
     welcomeSubtitle: 'आपके खेत प्रबंधन प्रणाली में आपका स्वागत है',
@@ -897,6 +914,7 @@ const translations = {
     signInToAccount: 'अपने खाते में साइन इन करें',
     welcomeBack: 'वापसी पर स्वागत है! कृपया अपना विवरण दर्ज करें।',
     createYourAccount: 'अपना खाता बनाएं',
+    joinKisanSetu: 'अपने खेत का कुशलतापूर्वक प्रबंधन शुरू करने के लिए किसानसेतु से जुड़ें',
     joinFarmManager: 'अपने खेत का कुशलतापूर्वक प्रबंधन शुरू करने के लिए FarmManager से जुड़ें',
     dontHaveAccount: 'खाता नहीं है?',
     createOneHere: 'यहाँ एक बनाएँ',
@@ -907,6 +925,21 @@ const translations = {
     password: 'पासवर्ड',
     confirmPassword: 'पासवर्ड की पुष्टि करें',
     createAccount: 'खाता बनाएं',
+    
+    // Auth Error Messages
+    errorPasswordLength: 'पासवर्ड कम से कम 8 वर्णों का होना चाहिए',
+    errorPasswordUppercase: 'पासवर्ड में कम से कम एक बड़ा अक्षर होना चाहिए',
+    errorPasswordLowercase: 'पासवर्ड में कम से कम एक छोटा अक्षर होना चाहिए',
+    errorPasswordNumber: 'पासवर्ड में कम से कम एक नंबर होना चाहिए',
+    errorUsernameLength: 'उपयोगकर्ता नाम 3-50 वर्णों का होना चाहिए',
+    errorUsernameFormat: 'उपयोगकर्ता नाम में केवल अक्षर, संख्या और अंडरस्कोर हो सकते हैं',
+    errorPasswordsNoMatch: 'पासवर्ड मेल नहीं खाते',
+    errorUsernameExists: 'उपयोगकर्ता नाम पहले से मौजूद है या अमान्य इनपुट',
+    errorServerError: 'सर्वर त्रुटि। कृपया बाद में पुन: प्रयास करें।',
+    errorRegistrationFailed: 'पंजीकरण विफल रहा। कृपया पुन: प्रयास करें।',
+    errorInvalidCredentials: 'अमान्य उपयोगकर्ता नाम या पासवर्ड',
+    errorNetworkError: 'नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।',
+    errorLoginFailed: 'लॉगिन विफल रहा। कृपया पुन: प्रयास करें।',
 
     // Work Tracker
     workTracker: 'कार्य ट्रैकर',

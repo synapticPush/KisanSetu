@@ -15,26 +15,26 @@ const Signup = () => {
 
     const validatePassword = (password) => {
         if (password.length < 8) {
-            return { valid: false, message: 'Password must be at least 8 characters long' };
+            return { valid: false, message: t('errorPasswordLength') };
         }
         if (!/[A-Z]/.test(password)) {
-            return { valid: false, message: 'Password must contain at least one uppercase letter' };
+            return { valid: false, message: t('errorPasswordUppercase') };
         }
         if (!/[a-z]/.test(password)) {
-            return { valid: false, message: 'Password must contain at least one lowercase letter' };
+            return { valid: false, message: t('errorPasswordLowercase') };
         }
         if (!/\d/.test(password)) {
-            return { valid: false, message: 'Password must contain at least one number' };
+            return { valid: false, message: t('errorPasswordNumber') };
         }
         return { valid: true };
     };
 
     const validateUsername = (username) => {
         if (username.length < 3 || username.length > 50) {
-            return { valid: false, message: 'Username must be 3-50 characters long' };
+            return { valid: false, message: t('errorUsernameLength') };
         }
         if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-            return { valid: false, message: 'Username can only contain letters, numbers, and underscores' };
+            return { valid: false, message: t('errorUsernameFormat') };
         }
         return { valid: true };
     };
@@ -54,7 +54,7 @@ const Signup = () => {
 
         // Validate passwords match
         if (password !== confirmPassword) {
-            setError('Passwords do not match');
+            setError(t('errorPasswordsNoMatch'));
             setLoading(false);
             return;
         }
@@ -82,11 +82,11 @@ const Signup = () => {
             if (error.response?.data?.detail) {
                 setError(error.response.data.detail);
             } else if (error.response?.status === 400) {
-                setError('Username already exists or invalid input');
+                setError(t('errorUsernameExists'));
             } else if (error.response?.status === 500) {
-                setError('Server error. Please try again later.');
+                setError(t('errorServerError'));
             } else {
-                setError('Registration failed. Please try again.');
+                setError(t('errorRegistrationFailed'));
             }
         } finally {
             setLoading(false);
@@ -106,7 +106,7 @@ const Signup = () => {
                         {t('createYourAccount')}
                     </h2>
                     <p className="mt-2 text-sm text-earth-600">
-                        {t('joinFarmManager')}
+                        {t('joinKisanSetu')}
                     </p>
                 </div>
 
