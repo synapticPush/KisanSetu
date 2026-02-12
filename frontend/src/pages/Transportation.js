@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useLanguage } from '../contexts/AppContext';
+import Modal from '../components/Modal';
 
 const Transportation = () => {
     const { t } = useLanguage();
@@ -210,142 +211,247 @@ const Transportation = () => {
                     </button>
                 </div>
 
-                {/* Add Transportation Form */}
-                {showAddForm && (
-                    <div className="card mb-8">
-                        <div className="px-6 py-4 border-b border-earth-200">
-                            <h3 className="text-lg font-medium text-earth-900">{t('addTransportation')}</h3>
+                {/* Add Transportation Modal */}
+                <Modal
+                    isOpen={showAddForm}
+                    onClose={() => setShowAddForm(false)}
+                    title={t('addTransportation')}
+                >
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label htmlFor="field_id" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('field')} *
+                                </label>
+                                <select
+                                    id="field_id"
+                                    name="field_id"
+                                    className="input w-full"
+                                    value={newTransportation.field_id}
+                                    onChange={handleInputChange}
+                                    required
+                                >
+                                    <option value="">{t('selectField')}</option>
+                                    {fields.map(field => (
+                                        <option key={field.id} value={field.id}>
+                                            {field.field_name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="lot_number" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('lotNumber')} *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="lot_number"
+                                    name="lot_number"
+                                    className="input w-full"
+                                    placeholder={t('enterLotNumber')}
+                                    value={newTransportation.lot_number}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="transport_date" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('transportDate')} *
+                                </label>
+                                <input
+                                    type="date"
+                                    id="transport_date"
+                                    name="transport_date"
+                                    className="input w-full"
+                                    value={newTransportation.transport_date}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="small_packets" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('small')} ({t('packets')})
+                                </label>
+                                <input
+                                    type="number"
+                                    id="small_packets"
+                                    name="small_packets"
+                                    className="input w-full"
+                                    placeholder={t('enterSmallPackets')}
+                                    value={newTransportation.small_packets}
+                                    onChange={handleInputChange}
+                                    min="0"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="medium_packets" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('medium')} ({t('packets')})
+                                </label>
+                                <input
+                                    type="number"
+                                    id="medium_packets"
+                                    name="medium_packets"
+                                    className="input w-full"
+                                    placeholder={t('enterMediumPackets')}
+                                    value={newTransportation.medium_packets}
+                                    onChange={handleInputChange}
+                                    min="0"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="large_packets" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('large')} ({t('packets')})
+                                </label>
+                                <input
+                                    type="number"
+                                    id="large_packets"
+                                    name="large_packets"
+                                    className="input w-full"
+                                    placeholder={t('enterLargePackets')}
+                                    value={newTransportation.large_packets}
+                                    onChange={handleInputChange}
+                                    min="0"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="overlarge_packets" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('overlarge')} ({t('packets')})
+                                </label>
+                                <input
+                                    type="number"
+                                    id="overlarge_packets"
+                                    name="overlarge_packets"
+                                    className="input w-full"
+                                    placeholder={t('enterXlargePackets')}
+                                    value={newTransportation.overlarge_packets}
+                                    onChange={handleInputChange}
+                                    min="0"
+                                />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('notes')}
+                                </label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    rows={3}
+                                    className="input w-full"
+                                    placeholder={t('optionalNotes')}
+                                    value={newTransportation.notes}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="flex justify-end space-x-3 mt-6">
+                            <button
+                                type="button"
+                                onClick={() => setShowAddForm(false)}
+                                className="btn btn-secondary"
+                            >
+                                {t('cancel')}
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="btn btn-primary disabled:opacity-50"
+                            >
+                                {loading ? t('adding') : t('addTransportation')}
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+
+                {/* Edit Transportation Modal */}
+                <Modal
+                    isOpen={!!editingTransportation}
+                    onClose={cancelEdit}
+                    title={t('editTransportation')}
+                >
+                    {editingTransportation && (
+                        <form onSubmit={handleUpdate}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label htmlFor="field_id" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('field')} *
-                                    </label>
-                                    <select
-                                        id="field_id"
-                                        name="field_id"
-                                        className="input"
-                                        value={newTransportation.field_id}
-                                        onChange={handleInputChange}
-                                        required
-                                    >
-                                        <option value="">{t('selectField')}</option>
-                                        {fields.map(field => (
-                                            <option key={field.id} value={field.id}>
-                                                {field.field_name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="lot_number" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('lotNumber')} *
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('lotNumber')}</label>
                                     <input
                                         type="text"
-                                        id="lot_number"
                                         name="lot_number"
-                                        className="input"
-                                        placeholder={t('enterLotNumber')}
-                                        value={newTransportation.lot_number}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingTransportation.lot_number || ''}
+                                        onChange={handleEditInputChange}
                                         required
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="transport_date" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('transportDate')} *
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('transportDate')}</label>
                                     <input
                                         type="date"
-                                        id="transport_date"
                                         name="transport_date"
-                                        className="input"
-                                        value={newTransportation.transport_date}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingTransportation.transport_date || ''}
+                                        onChange={handleEditInputChange}
                                         required
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="small_packets" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('small')} ({t('packets')})
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('small')} ({t('packets')})</label>
                                     <input
                                         type="number"
-                                        id="small_packets"
                                         name="small_packets"
-                                        className="input"
-                                        placeholder={t('enterSmallPackets')}
-                                        value={newTransportation.small_packets}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingTransportation.small_packets || ''}
+                                        onChange={handleEditInputChange}
                                         min="0"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="medium_packets" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('medium')} ({t('packets')})
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('medium')} ({t('packets')})</label>
                                     <input
                                         type="number"
-                                        id="medium_packets"
                                         name="medium_packets"
-                                        className="input"
-                                        placeholder={t('enterMediumPackets')}
-                                        value={newTransportation.medium_packets}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingTransportation.medium_packets || ''}
+                                        onChange={handleEditInputChange}
                                         min="0"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="large_packets" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('large')} ({t('packets')})
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('large')} ({t('packets')})</label>
                                     <input
                                         type="number"
-                                        id="large_packets"
                                         name="large_packets"
-                                        className="input"
-                                        placeholder={t('enterLargePackets')}
-                                        value={newTransportation.large_packets}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingTransportation.large_packets || ''}
+                                        onChange={handleEditInputChange}
                                         min="0"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="overlarge_packets" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('overlarge')} ({t('packets')})
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('overlarge')} ({t('packets')})</label>
                                     <input
                                         type="number"
-                                        id="overlarge_packets"
                                         name="overlarge_packets"
-                                        className="input"
-                                        placeholder={t('enterXlargePackets')}
-                                        value={newTransportation.overlarge_packets}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingTransportation.overlarge_packets || ''}
+                                        onChange={handleEditInputChange}
                                         min="0"
                                     />
                                 </div>
-                                <div className="md:col-span-2 lg:col-span-3">
-                                    <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('notes')}
-                                    </label>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('notes')}</label>
                                     <textarea
-                                        id="notes"
                                         name="notes"
-                                        rows={3}
-                                        className="input"
-                                        placeholder={t('optionalNotes')}
-                                        value={newTransportation.notes}
-                                        onChange={handleInputChange}
+                                        rows={2}
+                                        className="input w-full"
+                                        value={editingTransportation.notes || ''}
+                                        onChange={handleEditInputChange}
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-end space-x-3 mt-6">
+                            <div className="flex justify-end space-x-3 mt-4">
                                 <button
                                     type="button"
-                                    onClick={() => setShowAddForm(false)}
+                                    onClick={cancelEdit}
                                     className="btn btn-secondary"
                                 >
                                     {t('cancel')}
@@ -355,12 +461,12 @@ const Transportation = () => {
                                     disabled={loading}
                                     className="btn btn-primary disabled:opacity-50"
                                 >
-                                    {loading ? t('adding') : t('addTransportation')}
+                                    {loading ? t('updating') : t('updateTransportation')}
                                 </button>
                             </div>
                         </form>
-                    </div>
-                )}
+                    )}
+                </Modal>
 
                 {/* Transportation List */}
                 <div className="card">
@@ -443,109 +549,7 @@ const Transportation = () => {
                                                     </button>
                                                 </td>
                                             </tr>
-                                            {/* Edit Form Row */}
-                                            {editingTransportation && editingTransportation.id === transportation.id && (
-                                                <tr>
-                                                    <td colSpan="9" className="px-6 py-4 bg-earth-50">
-                                                        <form onSubmit={handleUpdate}>
-                                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                                <div>
-                                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('lotNumber')}</label>
-                                                                    <input
-                                                                        type="text"
-                                                                        name="lot_number"
-                                                                        className="input"
-                                                                        value={editingTransportation.lot_number || ''}
-                                                                        onChange={handleEditInputChange}
-                                                                        required
-                                                                    />
-                                                                </div>
-                                                                <div>
-                                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('transportDate')}</label>
-                                                                    <input
-                                                                        type="date"
-                                                                        name="transport_date"
-                                                                        className="input"
-                                                                        value={editingTransportation.transport_date || ''}
-                                                                        onChange={handleEditInputChange}
-                                                                        required
-                                                                    />
-                                                                </div>
-                                                                <div>
-                                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('small')} ({t('packets')})</label>
-                                                                    <input
-                                                                        type="number"
-                                                                        name="small_packets"
-                                                                        className="input"
-                                                                        value={editingTransportation.small_packets || ''}
-                                                                        onChange={handleEditInputChange}
-                                                                        min="0"
-                                                                    />
-                                                                </div>
-                                                                <div>
-                                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('medium')} ({t('packets')})</label>
-                                                                    <input
-                                                                        type="number"
-                                                                        name="medium_packets"
-                                                                        className="input"
-                                                                        value={editingTransportation.medium_packets || ''}
-                                                                        onChange={handleEditInputChange}
-                                                                        min="0"
-                                                                    />
-                                                                </div>
-                                                                <div>
-                                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('large')} ({t('packets')})</label>
-                                                                    <input
-                                                                        type="number"
-                                                                        name="large_packets"
-                                                                        className="input"
-                                                                        value={editingTransportation.large_packets || ''}
-                                                                        onChange={handleEditInputChange}
-                                                                        min="0"
-                                                                    />
-                                                                </div>
-                                                                <div>
-                                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('overlarge')} ({t('packets')})</label>
-                                                                    <input
-                                                                        type="number"
-                                                                        name="overlarge_packets"
-                                                                        className="input"
-                                                                        value={editingTransportation.overlarge_packets || ''}
-                                                                        onChange={handleEditInputChange}
-                                                                        min="0"
-                                                                    />
-                                                                </div>
-                                                                <div className="md:col-span-2 lg:col-span-3">
-                                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('notes')}</label>
-                                                                    <textarea
-                                                                        name="notes"
-                                                                        rows={2}
-                                                                        className="input"
-                                                                        value={editingTransportation.notes || ''}
-                                                                        onChange={handleEditInputChange}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="flex justify-end space-x-3 mt-4">
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={cancelEdit}
-                                                                    className="btn btn-secondary"
-                                                                >
-                                                                    {t('cancel')}
-                                                                </button>
-                                                                <button
-                                                                    type="submit"
-                                                                    disabled={loading}
-                                                                    className="btn btn-primary disabled:opacity-50"
-                                                                >
-                                                                    {loading ? t('updating') : t('updateTransportation')}
-                                                                </button>
-                                                            </div>
-                                                        </form>
-                                                    </td>
-                                                </tr>
-                                            )}
+
                                         </React.Fragment>
                                     ))}
                                 </tbody>

@@ -3,6 +3,7 @@ import api from '../services/api';
 import { useLanguage } from '../contexts/AppContext';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import Modal from '../components/Modal';
 
 
 const LotNumbers = () => {
@@ -102,6 +103,8 @@ const LotNumbers = () => {
                 notes: ''
             });
             setShowAddForm(false);
+            setSuccess(t('lotNumberAddedSuccessfully'));
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             let errorMessage = t('failedToCreateLotNumber');
             if (error.response && error.response.data && error.response.data.detail) {
@@ -144,6 +147,8 @@ const LotNumbers = () => {
             const response = await api.put(`/lot-numbers/${editingLot.id}`, lotData);
             setLotNumbers(lotNumbers.map(lot => lot.id === editingLot.id ? response.data : lot));
             setEditingLot(null);
+            setSuccess(t('lotNumberUpdatedSuccessfully'));
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             let errorMessage = t('failedToUpdateLotNumber');
             if (error.response && error.response.data && error.response.data.detail) {
@@ -370,56 +375,200 @@ const LotNumbers = () => {
                     </button>
                 </div>
 
-                {/* Add Lot Number Form */}
-                {
-                    showAddForm && (
-                        <div className="card mb-8">
-                            <h3 className="text-lg font-medium text-earth-900 mb-4">{t('addNewLotNumber')}</h3>
-                            <form onSubmit={handleSubmit}>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label htmlFor="lot_number" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('lotNumber')} *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="lot_number"
-                                            name="lot_number"
-                                            className="input"
-                                            placeholder={t('enterLotNumber')}
-                                            value={newLot.lot_number}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="field_name" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('fieldName')} *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="field_name"
-                                            name="field_name"
-                                            className="input"
-                                            placeholder={t('enterFieldName')}
-                                            value={newLot.field_name}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="storage_date" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('storageDate')}
-                                        </label>
-                                        <input
-                                            type="date"
-                                            id="storage_date"
-                                            name="storage_date"
-                                            className="input"
-                                            value={newLot.storage_date}
-                                            onChange={handleInputChange}
-                                        />
-                                    </div>
+                {/* Add Lot Number Modal */}
+                <Modal
+                    isOpen={showAddForm}
+                    onClose={() => setShowAddForm(false)}
+                    title={t('addNewLotNumber')}
+                >
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-1 gap-4">
+                            <div>
+                                <label htmlFor="lot_number" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('lotNumber')} *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="lot_number"
+                                    name="lot_number"
+                                    className="input w-full"
+                                    placeholder={t('enterLotNumber')}
+                                    value={newLot.lot_number}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="field_name" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('fieldName')} *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="field_name"
+                                    name="field_name"
+                                    className="input w-full"
+                                    placeholder={t('enterFieldName')}
+                                    value={newLot.field_name}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="storage_date" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('storageDate')}
+                                </label>
+                                <input
+                                    type="date"
+                                    id="storage_date"
+                                    name="storage_date"
+                                    className="input w-full"
+                                    value={newLot.storage_date}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-2">
+                                        {t('smallPackets')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="small_packets"
+                                        className="input w-full"
+                                        placeholder="0"
+                                        value={newLot.small_packets}
+                                        onChange={handleInputChange}
+                                        min="0"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-2">
+                                        {t('mediumPackets')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="medium_packets"
+                                        className="input w-full"
+                                        placeholder="0"
+                                        value={newLot.medium_packets}
+                                        onChange={handleInputChange}
+                                        min="0"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-2">
+                                        {t('largePackets')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="large_packets"
+                                        className="input w-full"
+                                        placeholder="0"
+                                        value={newLot.large_packets}
+                                        onChange={handleInputChange}
+                                        min="0"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-2">
+                                        {t('xlargePackets')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="xlarge_packets"
+                                        className="input w-full"
+                                        placeholder="0"
+                                        value={newLot.xlarge_packets}
+                                        onChange={handleInputChange}
+                                        min="0"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('notes')}
+                                </label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    className="input w-full"
+                                    placeholder={t('enterNotes')}
+                                    value={newLot.notes}
+                                    onChange={handleInputChange}
+                                    rows="3"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end space-x-3 mt-6">
+                            <button
+                                type="button"
+                                onClick={() => setShowAddForm(false)}
+                                className="btn btn-secondary"
+                            >
+                                {t('cancel')}
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="btn btn-primary disabled:opacity-50"
+                            >
+                                {loading ? t('adding') : t('addLotNumber')}
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+
+                {/* Edit Lot Number Modal */}
+                <Modal
+                    isOpen={!!editingLot}
+                    onClose={() => setEditingLot(null)}
+                    title={t('editLotNumber')}
+                >
+                    {editingLot && (
+                        <form onSubmit={handleEdit}>
+                            <div className="grid grid-cols-1 gap-4">
+                                <div>
+                                    <label htmlFor="edit_lot_number" className="block text-sm font-medium text-earth-700 mb-2">
+                                        {t('lotNumber')} *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="edit_lot_number"
+                                        name="lot_number"
+                                        className="input w-full"
+                                        value={editingLot.lot_number}
+                                        onChange={handleEditInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="edit_field_name" className="block text-sm font-medium text-earth-700 mb-2">
+                                        {t('fieldName')} *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="edit_field_name"
+                                        name="field_name"
+                                        className="input w-full"
+                                        value={editingLot.field_name}
+                                        onChange={handleEditInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="edit_storage_date" className="block text-sm font-medium text-earth-700 mb-2">
+                                        {t('storageDate')}
+                                    </label>
+                                    <input
+                                        type="date"
+                                        id="edit_storage_date"
+                                        name="storage_date"
+                                        className="input w-full"
+                                        value={editingLot.storage_date}
+                                        onChange={handleEditInputChange}
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-earth-700 mb-2">
                                             {t('smallPackets')}
@@ -427,10 +576,9 @@ const LotNumbers = () => {
                                         <input
                                             type="number"
                                             name="small_packets"
-                                            className="input"
-                                            placeholder={t('enterSmallPackets')}
-                                            value={newLot.small_packets}
-                                            onChange={handleInputChange}
+                                            className="input w-full"
+                                            value={editingLot.small_packets}
+                                            onChange={handleEditInputChange}
                                             min="0"
                                         />
                                     </div>
@@ -441,10 +589,9 @@ const LotNumbers = () => {
                                         <input
                                             type="number"
                                             name="medium_packets"
-                                            className="input"
-                                            placeholder={t('enterMediumPackets')}
-                                            value={newLot.medium_packets}
-                                            onChange={handleInputChange}
+                                            className="input w-full"
+                                            value={editingLot.medium_packets}
+                                            onChange={handleEditInputChange}
                                             min="0"
                                         />
                                     </div>
@@ -455,10 +602,9 @@ const LotNumbers = () => {
                                         <input
                                             type="number"
                                             name="large_packets"
-                                            className="input"
-                                            placeholder={t('enterLargePackets')}
-                                            value={newLot.large_packets}
-                                            onChange={handleInputChange}
+                                            className="input w-full"
+                                            value={editingLot.large_packets}
+                                            onChange={handleEditInputChange}
                                             min="0"
                                         />
                                     </div>
@@ -469,48 +615,46 @@ const LotNumbers = () => {
                                         <input
                                             type="number"
                                             name="xlarge_packets"
-                                            className="input"
-                                            placeholder={t('enterXlargePackets')}
-                                            value={newLot.xlarge_packets}
-                                            onChange={handleInputChange}
+                                            className="input w-full"
+                                            value={editingLot.xlarge_packets}
+                                            onChange={handleEditInputChange}
                                             min="0"
                                         />
                                     </div>
-                                    <div>
-                                        <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('notes')}
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="notes"
-                                            name="notes"
-                                            className="input"
-                                            placeholder={t('enterNotes')}
-                                            value={newLot.notes}
-                                            onChange={handleInputChange}
-                                        />
-                                    </div>
                                 </div>
-                                <div className="flex justify-end space-x-3 mt-6">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowAddForm(false)}
-                                        className="btn btn-secondary"
-                                    >
-                                        {t('cancel')}
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="btn btn-primary disabled:opacity-50"
-                                    >
-                                        {loading ? t('adding') : t('addLotNumber')}
-                                    </button>
+                                <div>
+                                    <label htmlFor="edit_notes" className="block text-sm font-medium text-earth-700 mb-2">
+                                        {t('notes')}
+                                    </label>
+                                    <textarea
+                                        id="edit_notes"
+                                        name="notes"
+                                        className="input w-full"
+                                        value={editingLot.notes || ''}
+                                        onChange={handleEditInputChange}
+                                        rows="3"
+                                    />
                                 </div>
-                            </form>
-                        </div>
-                    )
-                }
+                            </div>
+                            <div className="flex justify-end space-x-3 mt-6">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditingLot(null)}
+                                    className="btn btn-secondary"
+                                >
+                                    {t('cancel')}
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="btn btn-primary disabled:opacity-50"
+                                >
+                                    {loading ? t('saving') : t('save')}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </Modal>
 
                 {/* Lot Numbers List */}
                 <div className="space-y-4">
@@ -525,161 +669,40 @@ const LotNumbers = () => {
                     ) : (
                         filteredLotNumbers.map(lot => (
                             <div key={lot.id} className="card">
-                                {editingLot && editingLot.id === lot.id ? (
-                                    <form onSubmit={handleEdit}>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">{t('lotNumber')}</label>
-                                                <input
-                                                    type="text"
-                                                    name="lot_number"
-                                                    className="input"
-                                                    value={editingLot.lot_number}
-                                                    onChange={handleEditInputChange}
-                                                    required
-                                                />
+                                <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-0">
+                                    <div className="flex-1 w-full">
+                                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                                            <div className="w-full sm:w-auto">
+                                                <h3 className="text-lg font-medium text-earth-900 break-words">{lot.lot_number}</h3>
+                                                <p className="text-sm text-earth-600 break-words">{lot.field_name}</p>
+                                                <p className="text-xs text-earth-500 mt-1 break-words">
+                                                    S: {lot.small_packets || 0} | M: {lot.medium_packets || 0} | L: {lot.large_packets || 0} | XL: {lot.xlarge_packets || 0}
+                                                </p>
                                             </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">{t('fieldName')}</label>
-                                                <input
-                                                    type="text"
-                                                    name="field_name"
-                                                    className="input"
-                                                    value={editingLot.field_name}
-                                                    onChange={handleEditInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                    {t('smallPackets')}
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    name="small_packets"
-                                                    className="input"
-                                                    placeholder={t('enterSmallPackets')}
-                                                    value={editingLot.small_packets}
-                                                    onChange={handleEditInputChange}
-                                                    min="0"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                    {t('mediumPackets')}
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    name="medium_packets"
-                                                    className="input"
-                                                    placeholder={t('enterMediumPackets')}
-                                                    value={editingLot.medium_packets}
-                                                    onChange={handleEditInputChange}
-                                                    min="0"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                    {t('largePackets')}
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    name="large_packets"
-                                                    className="input"
-                                                    placeholder={t('enterLargePackets')}
-                                                    value={editingLot.large_packets}
-                                                    onChange={handleEditInputChange}
-                                                    min="0"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                    {t('xlargePackets')}
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    name="xlarge_packets"
-                                                    className="input"
-                                                    placeholder={t('enterXlargePackets')}
-                                                    value={editingLot.xlarge_packets}
-                                                    onChange={handleEditInputChange}
-                                                    min="0"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">{t('storageDate')}</label>
-                                                <input
-                                                    type="date"
-                                                    name="storage_date"
-                                                    className="input"
-                                                    value={editingLot.storage_date}
-                                                    onChange={handleEditInputChange}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">{t('notes')}</label>
-                                                <input
-                                                    type="text"
-                                                    name="notes"
-                                                    className="input"
-                                                    value={editingLot.notes || ''}
-                                                    onChange={handleEditInputChange}
-                                                />
+                                            <div className="text-left sm:text-right w-full sm:w-auto mt-2 sm:mt-0">
+                                                <p className="text-lg font-semibold text-primary-600">{lot.total_packets || 0} {t('packets')}</p>
+                                                <p className="text-sm text-earth-500">{t('storedOn')}: {formatDate(lot.storage_date)}</p>
                                             </div>
                                         </div>
-                                        <div className="flex justify-end space-x-3 mt-6">
-                                            <button
-                                                type="button"
-                                                onClick={() => setEditingLot(null)}
-                                                className="btn btn-secondary"
-                                            >
-                                                {t('cancel')}
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                disabled={loading}
-                                                className="btn btn-primary disabled:opacity-50"
-                                            >
-                                                {loading ? t('saving') : t('save')}
-                                            </button>
-                                        </div>
-                                    </form>
-                                ) : (
-                                    <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-0">
-                                        <div className="flex-1 w-full">
-                                            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-                                                <div className="w-full sm:w-auto">
-                                                    <h3 className="text-lg font-medium text-earth-900 break-words">{lot.lot_number}</h3>
-                                                    <p className="text-sm text-earth-600 break-words">{lot.field_name}</p>
-                                                    <p className="text-xs text-earth-500 mt-1 break-words">
-                                                        S: {lot.small_packets || 0} | M: {lot.medium_packets || 0} | L: {lot.large_packets || 0} | XL: {lot.xlarge_packets || 0}
-                                                    </p>
-                                                </div>
-                                                <div className="text-left sm:text-right w-full sm:w-auto mt-2 sm:mt-0">
-                                                    <p className="text-lg font-semibold text-primary-600">{lot.total_packets || 0} {t('packets')}</p>
-                                                    <p className="text-sm text-earth-500">{t('storedOn')}: {formatDate(lot.storage_date)}</p>
-                                                </div>
-                                            </div>
-                                            {lot.notes && (
-                                                <p className="mt-2 text-sm text-gray-600 break-words">{t('notes')}: {lot.notes}</p>
-                                            )}
-                                        </div>
-                                        <div className="flex gap-2 self-end sm:self-center ml-0 sm:ml-4">
-                                            <button
-                                                onClick={() => setEditingLot(lot)}
-                                                className="btn btn-secondary btn-sm"
-                                            >
-                                                {t('edit')}
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(lot.id)}
-                                                className="btn btn-danger btn-sm"
-                                            >
-                                                {t('delete')}
-                                            </button>
-                                        </div>
+                                        {lot.notes && (
+                                            <p className="mt-2 text-sm text-gray-600 break-words">{t('notes')}: {lot.notes}</p>
+                                        )}
                                     </div>
-                                )}
+                                    <div className="flex gap-2 self-end sm:self-center ml-0 sm:ml-4">
+                                        <button
+                                            onClick={() => setEditingLot(lot)}
+                                            className="btn btn-secondary btn-sm"
+                                        >
+                                            {t('edit')}
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(lot.id)}
+                                            className="btn btn-danger btn-sm"
+                                        >
+                                            {t('delete')}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         ))
                     )}

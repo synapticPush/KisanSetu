@@ -3,6 +3,7 @@ import api from '../services/api';
 import { useLanguage } from '../contexts/AppContext';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import Modal from '../components/Modal';
 
 const Money = () => {
     const { t } = useLanguage();
@@ -77,6 +78,8 @@ const Money = () => {
             setMoneyRecords([...moneyRecords, response.data]);
             setNewRecord({ paid_to: '', amount: '', payment_date: '', payment_method: '', notes: '' });
             setShowAddForm(false);
+            setSuccess(t('recordAddedSuccessfully'));
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error creating money record:', error);
 
@@ -126,6 +129,8 @@ const Money = () => {
             const response = await api.put(`/money-records/${editingRecord.id}`, updateData);
             setMoneyRecords(moneyRecords.map(record => record.id === editingRecord.id ? response.data : record));
             setEditingRecord(null);
+            setSuccess(t('recordUpdatedSuccessfully'));
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error updating money record:', error);
 
@@ -500,114 +505,200 @@ const Money = () => {
                     </button>
                 </div>
 
-                {/* Add Record Form */}
-                {
-                    showAddForm && (
-                        <div className="card mb-8">
-                            <div className="px-6 py-4 border-b border-earth-200">
-                                <h3 className="text-lg font-medium text-earth-900">{t('addMoneyRecord')}</h3>
+                {/* Add Record Modal */}
+                <Modal
+                    isOpen={showAddForm}
+                    onClose={() => setShowAddForm(false)}
+                    title={t('addMoneyRecord')}
+                >
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="paid_to" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('paidTo')} *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="paid_to"
+                                    name="paid_to"
+                                    className="input w-full"
+                                    placeholder={t('enterRecipientName')}
+                                    value={newRecord.paid_to}
+                                    onChange={handleInputChange}
+                                    required
+                                />
                             </div>
-                            <form onSubmit={handleSubmit} className="p-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    <div>
-                                        <label htmlFor="paid_to" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('paidTo')} *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="paid_to"
-                                            name="paid_to"
-                                            className="input"
-                                            placeholder={t('enterRecipientName')}
-                                            value={newRecord.paid_to}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="amount" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('amount')} (₹) *
-                                        </label>
-                                        <input
-                                            type="number"
-                                            id="amount"
-                                            name="amount"
-                                            className="input"
-                                            placeholder={t('enterAmount')}
-                                            value={newRecord.amount}
-                                            onChange={handleInputChange}
-                                            required
-                                            step="0.01"
-                                            min="0"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="payment_date" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('paymentDate')} *
-                                        </label>
-                                        <input
-                                            type="date"
-                                            id="payment_date"
-                                            name="payment_date"
-                                            className="input"
-                                            value={newRecord.payment_date}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="payment_method" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('paymentMethod')} *
-                                        </label>
-                                        <select
-                                            id="payment_method"
-                                            name="payment_method"
-                                            className="input"
-                                            value={newRecord.payment_method}
-                                            onChange={handleInputChange}
-                                            required
-                                        >
-                                            <option value="">{t('selectPaymentMethod')}</option>
-                                            <option value="cash">Cash</option>
-                                            <option value="upi">UPI</option>
-                                            <option value="bank">Bank Transfer</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
-                                            {t('notes')}
-                                        </label>
-                                        <textarea
-                                            id="notes"
-                                            name="notes"
-                                            rows={3}
-                                            className="input"
-                                            placeholder={t('enterAnyAdditionalNotes')}
-                                            value={newRecord.notes}
-                                            onChange={handleInputChange}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="flex justify-end space-x-3 mt-6">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowAddForm(false)}
-                                        className="btn btn-secondary"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="btn btn-primary disabled:opacity-50"
-                                    >
-                                        {loading ? t('adding') : t('addRecord')}
-                                    </button>
-                                </div>
-                            </form>
+                            <div>
+                                <label htmlFor="amount" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('amount')} (₹) *
+                                </label>
+                                <input
+                                    type="number"
+                                    id="amount"
+                                    name="amount"
+                                    className="input w-full"
+                                    placeholder={t('enterAmount')}
+                                    value={newRecord.amount}
+                                    onChange={handleInputChange}
+                                    required
+                                    step="0.01"
+                                    min="0"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="payment_date" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('paymentDate')} *
+                                </label>
+                                <input
+                                    type="date"
+                                    id="payment_date"
+                                    name="payment_date"
+                                    className="input w-full"
+                                    value={newRecord.payment_date}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="payment_method" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('paymentMethod')} *
+                                </label>
+                                <select
+                                    id="payment_method"
+                                    name="payment_method"
+                                    className="input w-full"
+                                    value={newRecord.payment_method}
+                                    onChange={handleInputChange}
+                                    required
+                                >
+                                    <option value="">{t('selectPaymentMethod')}</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="upi">UPI</option>
+                                    <option value="bank">Bank Transfer</option>
+                                </select>
+                            </div>
+                            <div className="md:col-span-2">
+                                <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('notes')}
+                                </label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    rows={3}
+                                    className="input w-full"
+                                    placeholder={t('enterAnyAdditionalNotes')}
+                                    value={newRecord.notes}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
-                    )
-                }
+                        <div className="flex justify-end space-x-3 mt-6">
+                            <button
+                                type="button"
+                                onClick={() => setShowAddForm(false)}
+                                className="btn btn-secondary"
+                            >
+                                {t('cancel')}
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="btn btn-primary disabled:opacity-50"
+                            >
+                                {loading ? t('adding') : t('addRecord')}
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+
+                {/* Edit Record Modal */}
+                <Modal
+                    isOpen={!!editingRecord}
+                    onClose={cancelEdit}
+                    title={t('editRecord')}
+                >
+                    {editingRecord && (
+                        <form onSubmit={handleEditSubmit}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('paidTo')}</label>
+                                    <input
+                                        type="text"
+                                        name="paid_to"
+                                        className="input w-full"
+                                        value={editingRecord.paid_to}
+                                        onChange={handleEditInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('amount')} (₹)</label>
+                                    <input
+                                        type="number"
+                                        name="amount"
+                                        className="input w-full"
+                                        value={editingRecord.amount}
+                                        onChange={handleEditInputChange}
+                                        required
+                                        step="0.01"
+                                        min="0"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('paymentDate')}</label>
+                                    <input
+                                        type="date"
+                                        name="payment_date"
+                                        className="input w-full"
+                                        value={editingRecord.payment_date}
+                                        onChange={handleEditInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('paymentMethod')}</label>
+                                    <select
+                                        name="payment_method"
+                                        className="input w-full"
+                                        value={editingRecord.payment_method}
+                                        onChange={handleEditInputChange}
+                                        required
+                                    >
+                                        <option value="cash">{t('cash')}</option>
+                                        <option value="upi">{t('upi')}</option>
+                                        <option value="bank">{t('bankTransfer')}</option>
+                                    </select>
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('notes')}</label>
+                                    <textarea
+                                        name="notes"
+                                        rows={2}
+                                        className="input w-full"
+                                        value={editingRecord.notes || ''}
+                                        onChange={handleEditInputChange}
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex justify-end space-x-3 mt-4">
+                                <button
+                                    type="button"
+                                    onClick={cancelEdit}
+                                    className="btn btn-secondary"
+                                >
+                                    {t('cancel')}
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="btn btn-primary disabled:opacity-50"
+                                >
+                                    {loading ? t('updating') : t('updateRecord')}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </Modal>
 
                 {/* Records List */}
                 <div className="card">

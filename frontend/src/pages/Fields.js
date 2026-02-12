@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useLanguage } from '../contexts/AppContext';
+import Modal from '../components/Modal';
 
 const Fields = () => {
     const { t } = useLanguage();
@@ -27,6 +28,7 @@ const Fields = () => {
     const [loading, setLoading] = useState(false);
     const [showAddForm, setShowAddForm] = useState(false);
     const [showYieldForm, setShowYieldForm] = useState(null);
+    const [editingYieldFieldId, setEditingYieldFieldId] = useState(null);
 
     useEffect(() => {
         fetchFields();
@@ -92,6 +94,8 @@ const Fields = () => {
             setFields([...fields, response.data]);
             setNewField({ field_name: '', location: '', area: '', year: '' });
             setShowAddForm(false);
+            setSuccess(t('fieldAddedSuccessfully'));
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error creating field:', error);
             setError('Failed to create field. Please try again.');
@@ -109,6 +113,8 @@ const Fields = () => {
             const response = await api.put(`/fields/${editingField.id}`, { ...editingField, season: 'Winter' });
             setFields(fields.map(field => field.id === editingField.id ? response.data : field));
             setEditingField(null);
+            setSuccess(t('fieldUpdatedSuccessfully'));
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error updating field:', error);
             setError('Failed to update field. Please try again.');
@@ -213,17 +219,22 @@ const Fields = () => {
     };
 
     const startEditYield = (fieldId, yieldRecord) => {
+        setEditingYieldFieldId(fieldId);
         setEditingYield({ ...yieldRecord });
     };
 
     const cancelEditYield = () => {
+        setEditingYieldFieldId(null);
         setEditingYield(null);
     };
 
-    const handleYieldUpdate = async (e, fieldId, yieldId) => {
+    const handleYieldUpdate = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+
+        const fieldId = editingYieldFieldId;
+        const yieldId = editingYield.id;
 
         try {
             const response = await api.put(`/fields/${fieldId}/yields/${yieldId}`, editingYield);
@@ -232,6 +243,9 @@ const Fields = () => {
                 [fieldId]: prev[fieldId].map(y => y.id === yieldId ? response.data : y)
             }));
             setEditingYield(null);
+            setEditingYieldFieldId(null);
+            setSuccess(t('yieldUpdatedSuccessfully'));
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error updating yield:', error);
             setError('Failed to update yield record. Please try again.');
@@ -300,72 +314,146 @@ const Fields = () => {
                     </button>
                 </div>
 
-                {/* Add Field Form */}
-                {showAddForm && (
-                    <div className="card mb-8">
-                        <div className="px-6 py-4 border-b border-earth-200">
-                            <h3 className="text-lg font-medium text-earth-900">{t('addNewField')}</h3>
+                {/* Add Field Modal */}
+                <Modal
+                    isOpen={showAddForm}
+                    onClose={() => setShowAddForm(false)}
+                    title={t('addNewField')}
+                >
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="field_name" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('fieldName')} *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="field_name"
+                                    name="field_name"
+                                    className="input w-full"
+                                    placeholder={t('fieldName')}
+                                    value={newField.field_name}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="location" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('location')}
+                                </label>
+                                <input
+                                    type="text"
+                                    id="location"
+                                    name="location"
+                                    className="input w-full"
+                                    placeholder={t('location')}
+                                    value={newField.location}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="area" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('size')} *
+                                </label>
+                                <input
+                                    type="number"
+                                    id="area"
+                                    name="area"
+                                    className="input w-full"
+                                    placeholder={t('enterAreaInAcres')}
+                                    value={newField.area}
+                                    onChange={handleInputChange}
+                                    required
+                                    step="0.1"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="year" className="block text-sm font-medium text-earth-700 mb-2">
+                                    {t('year')} *
+                                </label>
+                                <input
+                                    type="number"
+                                    id="year"
+                                    name="year"
+                                    className="input w-full"
+                                    placeholder={t('enterYear')}
+                                    value={newField.year}
+                                    onChange={handleInputChange}
+                                    required
+                                    min="2020"
+                                    max="2030"
+                                />
+                            </div>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-6">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex justify-end space-x-3 mt-6">
+                            <button
+                                type="button"
+                                onClick={() => setShowAddForm(false)}
+                                className="btn btn-secondary"
+                            >
+                                {t('cancel')}
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="btn btn-primary disabled:opacity-50"
+                            >
+                                {loading ? t('adding') : t('addField')}
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
 
+                {/* Edit Field Modal */}
+                <Modal
+                    isOpen={!!editingField}
+                    onClose={() => setEditingField(null)}
+                    title={t('editField')}
+                >
+                    {editingField && (
+                        <form onSubmit={handleEditSubmit}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label htmlFor="field_name" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('fieldName')} *
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('fieldName')}</label>
                                     <input
                                         type="text"
-                                        id="field_name"
                                         name="field_name"
-                                        className="input"
-                                        placeholder={t('fieldName')}
-                                        value={newField.field_name}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingField.field_name}
+                                        onChange={handleEditInputChange}
                                         required
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="location" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('location')}
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('location')}</label>
                                     <input
                                         type="text"
-                                        id="location"
                                         name="location"
-                                        className="input"
-                                        placeholder={t('location')}
-                                        value={newField.location}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingField.location || ''}
+                                        onChange={handleEditInputChange}
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="area" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('size')} *
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('size')} ({t('acres')})</label>
                                     <input
                                         type="number"
-                                        id="area"
                                         name="area"
-                                        className="input"
-                                        placeholder={t('enterAreaInAcres')}
-                                        value={newField.area}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingField.area}
+                                        onChange={handleEditInputChange}
                                         required
                                         step="0.1"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="year" className="block text-sm font-medium text-earth-700 mb-2">
-                                        {t('year')} *
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('year')}</label>
                                     <input
                                         type="number"
-                                        id="year"
                                         name="year"
-                                        className="input"
-                                        placeholder={t('enterYear')}
-                                        value={newField.year}
-                                        onChange={handleInputChange}
+                                        className="input w-full"
+                                        value={editingField.year}
+                                        onChange={handleEditInputChange}
                                         required
                                         min="2020"
                                         max="2030"
@@ -375,7 +463,7 @@ const Fields = () => {
                             <div className="flex justify-end space-x-3 mt-6">
                                 <button
                                     type="button"
-                                    onClick={() => setShowAddForm(false)}
+                                    onClick={cancelEdit}
                                     className="btn btn-secondary"
                                 >
                                     {t('cancel')}
@@ -385,12 +473,205 @@ const Fields = () => {
                                     disabled={loading}
                                     className="btn btn-primary disabled:opacity-50"
                                 >
-                                    {loading ? t('adding') : t('addField')}
+                                    {loading ? t('updating') : t('updateField')}
                                 </button>
                             </div>
                         </form>
-                    </div>
-                )}
+                    )}
+                </Modal>
+
+                {/* Add Yield Modal */}
+                <Modal
+                    isOpen={!!showYieldForm}
+                    onClose={() => setShowYieldForm(null)}
+                    title={t('addYield')}
+                >
+                    <form onSubmit={(e) => handleYieldSubmit(e, showYieldForm)}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label className="block text-sm font-medium text-earth-700 mb-1">{t('date')}</label>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    className="input w-full"
+                                    value={newYield.date}
+                                    onChange={handleYieldInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-earth-700 mb-1">{t('large')} ({t('packets')})</label>
+                                <input
+                                    type="number"
+                                    name="large"
+                                    className="input w-full"
+                                    placeholder={t('enterLargePotatoes')}
+                                    value={newYield.large}
+                                    onChange={handleYieldInputChange}
+                                    step="0.1"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-earth-700 mb-1">{t('medium')} ({t('packets')})</label>
+                                <input
+                                    type="number"
+                                    name="medium"
+                                    className="input w-full"
+                                    placeholder={t('enterMediumPotatoes')}
+                                    value={newYield.medium}
+                                    onChange={handleYieldInputChange}
+                                    step="0.1"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-earth-700 mb-1">{t('small')} ({t('packets')})</label>
+                                <input
+                                    type="number"
+                                    name="small"
+                                    className="input w-full"
+                                    placeholder={t('enterSmallPotatoes')}
+                                    value={newYield.small}
+                                    onChange={handleYieldInputChange}
+                                    step="0.1"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-earth-700 mb-1">{t('overlarge')} ({t('packets')})</label>
+                                <input
+                                    type="number"
+                                    name="overlarge"
+                                    className="input w-full"
+                                    placeholder={t('enterOverlargePotatoes')}
+                                    value={newYield.overlarge}
+                                    onChange={handleYieldInputChange}
+                                    step="0.1"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-earth-700 mb-1">{t('notes')}</label>
+                                <input
+                                    type="text"
+                                    name="notes"
+                                    className="input w-full"
+                                    placeholder={t('optionalNotes')}
+                                    value={newYield.notes}
+                                    onChange={handleYieldInputChange}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end space-x-3">
+                            <button
+                                type="button"
+                                onClick={() => setShowYieldForm(null)}
+                                className="btn btn-secondary"
+                            >
+                                {t('cancel')}
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="btn btn-primary disabled:opacity-50"
+                            >
+                                {loading ? t('adding') : t('addYield')}
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+
+                {/* Edit Yield Modal */}
+                <Modal
+                    isOpen={!!editingYield}
+                    onClose={cancelEditYield}
+                    title={t('editYield')}
+                >
+                    {editingYield && (
+                        <form onSubmit={handleYieldUpdate}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('date')}</label>
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        className="input w-full"
+                                        value={editingYield.date}
+                                        onChange={(e) => handleYieldInputChange(e, true)}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('large')} ({t('packets')})</label>
+                                    <input
+                                        type="number"
+                                        name="large"
+                                        className="input w-full"
+                                        value={editingYield.large || ''}
+                                        onChange={(e) => handleYieldInputChange(e, true)}
+                                        step="0.1"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('medium')} ({t('packets')})</label>
+                                    <input
+                                        type="number"
+                                        name="medium"
+                                        className="input w-full"
+                                        value={editingYield.medium || ''}
+                                        onChange={(e) => handleYieldInputChange(e, true)}
+                                        step="0.1"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('small')} ({t('packets')})</label>
+                                    <input
+                                        type="number"
+                                        name="small"
+                                        className="input w-full"
+                                        value={editingYield.small || ''}
+                                        onChange={(e) => handleYieldInputChange(e, true)}
+                                        step="0.1"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('overlarge')} ({t('packets')})</label>
+                                    <input
+                                        type="number"
+                                        name="overlarge"
+                                        className="input w-full"
+                                        value={editingYield.overlarge || ''}
+                                        onChange={(e) => handleYieldInputChange(e, true)}
+                                        step="0.1"
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('notes')}</label>
+                                    <textarea
+                                        name="notes"
+                                        rows={2}
+                                        className="input w-full"
+                                        value={editingYield.notes || ''}
+                                        onChange={(e) => handleYieldInputChange(e, true)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex justify-end space-x-3 mt-4">
+                                <button
+                                    type="button"
+                                    onClick={cancelEditYield}
+                                    className="btn btn-secondary"
+                                >
+                                    {t('cancel')}
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="btn btn-primary disabled:opacity-50"
+                                >
+                                    {loading ? t('updating') : t('updateYield')}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </Modal>
 
                 {/* Fields List */}
                 <div className="space-y-6">
@@ -436,78 +717,7 @@ const Fields = () => {
                                     </div>
                                 </div>
 
-                                {/* Edit Form */}
-                                {editingField && editingField.id === field.id && (
-                                    <div className="p-6 bg-earth-50 border-b border-earth-200">
-                                        <h4 className="text-md font-medium text-earth-900 mb-4">{t('editField')}</h4>
-                                        <form onSubmit={handleEditSubmit}>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('fieldName')}</label>
-                                                    <input
-                                                        type="text"
-                                                        name="field_name"
-                                                        className="input"
-                                                        value={editingField.field_name}
-                                                        onChange={handleEditInputChange}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('location')}</label>
-                                                    <input
-                                                        type="text"
-                                                        name="location"
-                                                        className="input"
-                                                        value={editingField.location || ''}
-                                                        onChange={handleEditInputChange}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('size')} ({t('acres')})</label>
-                                                    <input
-                                                        type="number"
-                                                        name="area"
-                                                        className="input"
-                                                        value={editingField.area}
-                                                        onChange={handleEditInputChange}
-                                                        required
-                                                        step="0.1"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t('year')}</label>
-                                                    <input
-                                                        type="number"
-                                                        name="year"
-                                                        className="input"
-                                                        value={editingField.year}
-                                                        onChange={handleEditInputChange}
-                                                        required
-                                                        min="2020"
-                                                        max="2030"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="flex justify-end space-x-3 mt-4">
-                                                <button
-                                                    type="button"
-                                                    onClick={cancelEdit}
-                                                    className="btn btn-secondary"
-                                                >
-                                                    Cancel
-                                                </button>
-                                                <button
-                                                    type="submit"
-                                                    disabled={loading}
-                                                    className="btn btn-primary disabled:opacity-50"
-                                                >
-                                                    {loading ? t('updating') : t('updateField')}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                )}
+
 
                                 {/* Field Details */}
                                 <div className="p-6">
@@ -537,102 +747,7 @@ const Fields = () => {
                                             </button>
                                         </div>
 
-                                        {/* Add Yield Form */}
-                                        {showYieldForm === field.id && (
-                                            <div className="p-4 bg-earth-50 rounded-lg mb-4">
-                                                <form onSubmit={(e) => handleYieldSubmit(e, field.id)}>
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
 
-                                                        <div>
-                                                            <label className="block text-sm font-medium text-earth-700 mb-1">{t('date')}</label>
-                                                            <input
-                                                                type="date"
-                                                                name="date"
-                                                                className="input"
-                                                                value={newYield.date}
-                                                                onChange={handleYieldInputChange}
-                                                                required
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="block text-sm font-medium text-earth-700 mb-1">{t('large')} ({t('packets')})</label>
-                                                            <input
-                                                                type="number"
-                                                                name="large"
-                                                                className="input"
-                                                                placeholder={t('enterLargePotatoes')}
-                                                                value={newYield.large}
-                                                                onChange={handleYieldInputChange}
-                                                                step="0.1"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="block text-sm font-medium text-earth-700 mb-1">{t('medium')} ({t('packets')})</label>
-                                                            <input
-                                                                type="number"
-                                                                name="medium"
-                                                                className="input"
-                                                                placeholder={t('enterMediumPotatoes')}
-                                                                value={newYield.medium}
-                                                                onChange={handleYieldInputChange}
-                                                                step="0.1"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="block text-sm font-medium text-earth-700 mb-1">{t('small')} ({t('packets')})</label>
-                                                            <input
-                                                                type="number"
-                                                                name="small"
-                                                                className="input"
-                                                                placeholder={t('enterSmallPotatoes')}
-                                                                value={newYield.small}
-                                                                onChange={handleYieldInputChange}
-                                                                step="0.1"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="block text-sm font-medium text-earth-700 mb-1">{t('overlarge')} ({t('packets')})</label>
-                                                            <input
-                                                                type="number"
-                                                                name="overlarge"
-                                                                className="input"
-                                                                placeholder={t('enterOverlargePotatoes')}
-                                                                value={newYield.overlarge}
-                                                                onChange={handleYieldInputChange}
-                                                                step="0.1"
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className="block text-sm font-medium text-earth-700 mb-1">{t('notes')}</label>
-                                                            <input
-                                                                type="text"
-                                                                name="notes"
-                                                                className="input"
-                                                                placeholder={t('optionalNotes')}
-                                                                value={newYield.notes}
-                                                                onChange={handleYieldInputChange}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex justify-end space-x-3">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setShowYieldForm(null)}
-                                                            className="btn btn-secondary"
-                                                        >
-                                                            Cancel
-                                                        </button>
-                                                        <button
-                                                            type="submit"
-                                                            disabled={loading}
-                                                            className="btn btn-primary disabled:opacity-50"
-                                                        >
-                                                            {loading ? t('adding') : t('addYield')}
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        )}
 
                                         {/* Yield List */}
                                         {yields[field.id] && yields[field.id].length > 0 ? (
@@ -684,98 +799,7 @@ const Fields = () => {
                                                                         </button>
                                                                     </td>
                                                                 </tr>
-                                                                {/* Edit Form Row */}
-                                                                {editingYield && editingYield.id === yieldRecord.id && (
-                                                                    <tr>
-                                                                        <td colSpan="8" className="px-4 py-4 bg-earth-50">
-                                                                            <form onSubmit={(e) => handleYieldUpdate(e, field.id, yieldRecord.id)}>
-                                                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                                                    <div>
-                                                                                        <label className="block text-sm font-medium text-earth-700 mb-1">{t('date')}</label>
-                                                                                        <input
-                                                                                            type="date"
-                                                                                            name="date"
-                                                                                            className="input"
-                                                                                            value={editingYield.date}
-                                                                                            onChange={(e) => handleYieldInputChange(e, true)}
-                                                                                            required
-                                                                                        />
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <label className="block text-sm font-medium text-earth-700 mb-1">{t('large')} ({t('packets')})</label>
-                                                                                        <input
-                                                                                            type="number"
-                                                                                            name="large"
-                                                                                            className="input"
-                                                                                            value={editingYield.large || ''}
-                                                                                            onChange={(e) => handleYieldInputChange(e, true)}
-                                                                                            step="0.1"
-                                                                                        />
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <label className="block text-sm font-medium text-earth-700 mb-1">{t('medium')} ({t('packets')})</label>
-                                                                                        <input
-                                                                                            type="number"
-                                                                                            name="medium"
-                                                                                            className="input"
-                                                                                            value={editingYield.medium || ''}
-                                                                                            onChange={(e) => handleYieldInputChange(e, true)}
-                                                                                            step="0.1"
-                                                                                        />
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <label className="block text-sm font-medium text-earth-700 mb-1">{t('small')} ({t('packets')})</label>
-                                                                                        <input
-                                                                                            type="number"
-                                                                                            name="small"
-                                                                                            className="input"
-                                                                                            value={editingYield.small || ''}
-                                                                                            onChange={(e) => handleYieldInputChange(e, true)}
-                                                                                            step="0.1"
-                                                                                        />
-                                                                                    </div>
-                                                                                    <div>
-                                                                                        <label className="block text-sm font-medium text-earth-700 mb-1">{t('overlarge')} ({t('packets')})</label>
-                                                                                        <input
-                                                                                            type="number"
-                                                                                            name="overlarge"
-                                                                                            className="input"
-                                                                                            value={editingYield.overlarge || ''}
-                                                                                            onChange={(e) => handleYieldInputChange(e, true)}
-                                                                                            step="0.1"
-                                                                                        />
-                                                                                    </div>
-                                                                                    <div className="md:col-span-2 lg:col-span-3">
-                                                                                        <label className="block text-sm font-medium text-earth-700 mb-1">{t('notes')}</label>
-                                                                                        <textarea
-                                                                                            name="notes"
-                                                                                            rows={2}
-                                                                                            className="input"
-                                                                                            value={editingYield.notes || ''}
-                                                                                            onChange={(e) => handleYieldInputChange(e, true)}
-                                                                                        />
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div className="flex justify-end space-x-3 mt-4">
-                                                                                    <button
-                                                                                        type="button"
-                                                                                        onClick={cancelEditYield}
-                                                                                        className="btn btn-secondary"
-                                                                                    >
-                                                                                        Cancel
-                                                                                    </button>
-                                                                                    <button
-                                                                                        type="submit"
-                                                                                        disabled={loading}
-                                                                                        className="btn btn-primary disabled:opacity-50"
-                                                                                    >
-                                                                                        {loading ? t('updating') : t('updateYield')}
-                                                                                    </button>
-                                                                                </div>
-                                                                            </form>
-                                                                        </td>
-                                                                    </tr>
-                                                                )}
+
                                                             </React.Fragment>
                                                         ))}
                                                     </tbody>

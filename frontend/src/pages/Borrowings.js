@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useLanguage } from '../contexts/AppContext';
+import Modal from '../components/Modal';
 
 const Borrowings = () => {
     const { t } = useLanguage();
@@ -73,6 +74,8 @@ const Borrowings = () => {
             setBorrowings([...borrowings, response.data]);
             setNewBorrowing({ borrower_name: '', amount: '', borrow_date: '', expected_return_date: '', notes: '' });
             setShowAddForm(false);
+            setSuccess('Borrowing added successfully!');
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error creating borrowing:', error);
 
@@ -121,6 +124,8 @@ const Borrowings = () => {
             };
 
             const response = await api.put(`/borrowings/${editingBorrowing.id}`, updateData);
+            setSuccess('Borrowing updated successfully!');
+            setTimeout(() => setSuccess(''), 5000);
             setBorrowings(borrowings.map(borrowing => borrowing.id === editingBorrowing.id ? response.data : borrowing));
             setEditingBorrowing(null);
         } catch (error) {
@@ -304,7 +309,7 @@ const Borrowings = () => {
                 {/* Add Borrowing Button */}
                 <div className="mb-6">
                     <button
-                        onClick={() => setShowAddForm(!showAddForm)}
+                        onClick={() => setShowAddForm(true)}
                         className="btn btn-primary"
                     >
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,91 +319,199 @@ const Borrowings = () => {
                     </button>
                 </div>
 
-                {/* Add Borrowing Form */}
-                {showAddForm && (
-                    <div className="card mb-8">
-                        <div className="px-6 py-4 border-b border-earth-200">
-                            <h3 className="text-lg font-medium text-earth-900">Add New Borrowing</h3>
+                {/* Add Borrowing Modal */}
+                <Modal
+                    isOpen={showAddForm}
+                    onClose={() => setShowAddForm(false)}
+                    title="Add New Borrowing"
+                    size="lg"
+                >
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label htmlFor="borrower_name" className="block text-sm font-medium text-earth-700 mb-2">
+                                    Borrower Name *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="borrower_name"
+                                    name="borrower_name"
+                                    className="input"
+                                    placeholder="Enter borrower name"
+                                    value={newBorrowing.borrower_name}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="amount" className="block text-sm font-medium text-earth-700 mb-2">
+                                    Amount *
+                                </label>
+                                <input
+                                    type="number"
+                                    id="amount"
+                                    name="amount"
+                                    className="input"
+                                    placeholder="Enter amount"
+                                    value={newBorrowing.amount}
+                                    onChange={handleInputChange}
+                                    required
+                                    step="0.01"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="borrow_date" className="block text-sm font-medium text-earth-700 mb-2">
+                                    Borrow Date *
+                                </label>
+                                <input
+                                    type="date"
+                                    id="borrow_date"
+                                    name="borrow_date"
+                                    className="input"
+                                    value={newBorrowing.borrow_date}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="expected_return_date" className="block text-sm font-medium text-earth-700 mb-2">
+                                    Expected Return Date
+                                </label>
+                                <input
+                                    type="date"
+                                    id="expected_return_date"
+                                    name="expected_return_date"
+                                    className="input"
+                                    value={newBorrowing.expected_return_date}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
+                                    Notes
+                                </label>
+                                <textarea
+                                    id="notes"
+                                    name="notes"
+                                    rows={3}
+                                    className="input"
+                                    placeholder="Enter any additional notes"
+                                    value={newBorrowing.notes}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
                         </div>
-                        <form onSubmit={handleSubmit} className="p-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="flex justify-end space-x-3 mt-6">
+                            <button
+                                type="button"
+                                onClick={() => setShowAddForm(false)}
+                                className="btn btn-secondary"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="btn btn-primary disabled:opacity-50"
+                            >
+                                {loading ? 'Adding...' : 'Add Borrowing'}
+                            </button>
+                        </div>
+                    </form>
+                </Modal>
+
+                {/* Edit Borrowing Modal */}
+                <Modal
+                    isOpen={!!editingBorrowing}
+                    onClose={() => setEditingBorrowing(null)}
+                    title="Edit Borrowing"
+                    size="lg"
+                >
+                    {editingBorrowing && (
+                        <form onSubmit={handleEditSubmit}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label htmlFor="borrower_name" className="block text-sm font-medium text-earth-700 mb-2">
-                                        Borrower Name *
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">Borrower Name</label>
                                     <input
                                         type="text"
-                                        id="borrower_name"
                                         name="borrower_name"
                                         className="input"
-                                        placeholder="Enter borrower name"
-                                        value={newBorrowing.borrower_name}
-                                        onChange={handleInputChange}
+                                        value={editingBorrowing.borrower_name}
+                                        onChange={handleEditInputChange}
                                         required
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="amount" className="block text-sm font-medium text-earth-700 mb-2">
-                                        Amount *
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">Amount</label>
                                     <input
                                         type="number"
-                                        id="amount"
                                         name="amount"
                                         className="input"
-                                        placeholder="Enter amount"
-                                        value={newBorrowing.amount}
-                                        onChange={handleInputChange}
+                                        value={editingBorrowing.amount}
+                                        onChange={handleEditInputChange}
                                         required
                                         step="0.01"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="borrow_date" className="block text-sm font-medium text-earth-700 mb-2">
-                                        Borrow Date *
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">Borrow Date</label>
                                     <input
                                         type="date"
-                                        id="borrow_date"
                                         name="borrow_date"
                                         className="input"
-                                        value={newBorrowing.borrow_date}
-                                        onChange={handleInputChange}
+                                        value={editingBorrowing.borrow_date || ''}
+                                        onChange={handleEditInputChange}
                                         required
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="expected_return_date" className="block text-sm font-medium text-earth-700 mb-2">
-                                        Expected Return Date
-                                    </label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">Expected Return</label>
                                     <input
                                         type="date"
-                                        id="expected_return_date"
                                         name="expected_return_date"
                                         className="input"
-                                        value={newBorrowing.expected_return_date}
-                                        onChange={handleInputChange}
+                                        value={editingBorrowing.expected_return_date || ''}
+                                        onChange={handleEditInputChange}
                                     />
                                 </div>
-                                <div className="md:col-span-2 lg:col-span-3">
-                                    <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
-                                        Notes
-                                    </label>
-                                    <textarea
-                                        id="notes"
-                                        name="notes"
-                                        rows={3}
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">Actual Return</label>
+                                    <input
+                                        type="date"
+                                        name="actual_return_date"
                                         className="input"
-                                        placeholder="Enter any additional notes"
-                                        value={newBorrowing.notes}
-                                        onChange={handleInputChange}
+                                        value={editingBorrowing.actual_return_date || ''}
+                                        onChange={handleEditInputChange}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">Status</label>
+                                    <select
+                                        name="status"
+                                        className="input"
+                                        value={editingBorrowing.status}
+                                        onChange={handleEditInputChange}
+                                    >
+                                        <option value="pending">Pending</option>
+                                        <option value="returned">Returned</option>
+                                        <option value="overdue">Overdue</option>
+                                    </select>
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">Notes</label>
+                                    <textarea
+                                        name="notes"
+                                        rows={2}
+                                        className="input"
+                                        value={editingBorrowing.notes || ''}
+                                        onChange={handleEditInputChange}
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-end space-x-3 mt-6">
+                            <div className="flex justify-end space-x-3 mt-4">
                                 <button
                                     type="button"
-                                    onClick={() => setShowAddForm(false)}
+                                    onClick={() => setEditingBorrowing(null)}
                                     className="btn btn-secondary"
                                 >
                                     Cancel
@@ -408,12 +521,12 @@ const Borrowings = () => {
                                     disabled={loading}
                                     className="btn btn-primary disabled:opacity-50"
                                 >
-                                    {loading ? 'Adding...' : 'Add Borrowing'}
+                                    {loading ? 'Saving...' : 'Save Changes'}
                                 </button>
                             </div>
                         </form>
-                    </div>
-                )}
+                    )}
+                </Modal>
 
                 {/* Borrowings List */}
                 <div className="space-y-6">
@@ -480,99 +593,6 @@ const Borrowings = () => {
                                     </div>
                                 </div>
 
-                                {/* Edit Form */}
-                                {editingBorrowing && editingBorrowing.id === borrowing.id && (
-                                    <div className="p-6 bg-earth-50 border-b border-earth-200">
-                                        <h4 className="text-md font-medium text-earth-900 mb-4">Edit Borrowing</h4>
-                                        <form onSubmit={handleEditSubmit}>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">Borrower Name</label>
-                                                    <input
-                                                        type="text"
-                                                        name="borrower_name"
-                                                        className="input"
-                                                        value={editingBorrowing.borrower_name}
-                                                        onChange={handleEditInputChange}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">Amount</label>
-                                                    <input
-                                                        type="number"
-                                                        name="amount"
-                                                        className="input"
-                                                        value={editingBorrowing.amount}
-                                                        onChange={handleEditInputChange}
-                                                        required
-                                                        step="0.01"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">Status</label>
-                                                    <select
-                                                        name="status"
-                                                        className="input"
-                                                        value={editingBorrowing.status}
-                                                        onChange={handleEditInputChange}
-                                                    >
-                                                        <option value="pending">Pending</option>
-                                                        <option value="returned">Returned</option>
-                                                        <option value="overdue">Overdue</option>
-                                                    </select>
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">Borrow Date</label>
-                                                    <input
-                                                        type="date"
-                                                        name="borrow_date"
-                                                        className="input"
-                                                        value={editingBorrowing.borrow_date}
-                                                        onChange={handleEditInputChange}
-                                                        required
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">Expected Return Date</label>
-                                                    <input
-                                                        type="date"
-                                                        name="expected_return_date"
-                                                        className="input"
-                                                        value={editingBorrowing.expected_return_date || ''}
-                                                        onChange={handleEditInputChange}
-                                                    />
-                                                </div>
-                                                <div className="md:col-span-2 lg:col-span-3">
-                                                    <label className="block text-sm font-medium text-earth-700 mb-1">Notes</label>
-                                                    <textarea
-                                                        name="notes"
-                                                        rows={2}
-                                                        className="input"
-                                                        value={editingBorrowing.notes || ''}
-                                                        onChange={handleEditInputChange}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="flex justify-end space-x-3 mt-4">
-                                                <button
-                                                    type="button"
-                                                    onClick={cancelEdit}
-                                                    className="btn btn-secondary"
-                                                >
-                                                    Cancel
-                                                </button>
-                                                <button
-                                                    type="submit"
-                                                    disabled={loading}
-                                                    className="btn btn-primary disabled:opacity-50"
-                                                >
-                                                    {loading ? 'Updating...' : 'Update Borrowing'}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                )}
 
                                 {/* Notes Section */}
                                 {borrowing.notes && (

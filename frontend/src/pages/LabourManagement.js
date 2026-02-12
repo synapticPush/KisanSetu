@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import Modal from '../components/Modal';
 import { useLanguage } from '../contexts/AppContext';
 import logger from '../utils/logger';
 import jsPDF from 'jspdf';
@@ -572,6 +573,8 @@ const LabourManagement = () => {
             setLabourGroups([...labourGroups, response.data]);
             setNewGroup({ group_name: '' });
             setShowGroupForm(false);
+            setSuccess(t('groupCreatedSuccessfully') || 'Group created successfully');
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             logger.error("Error creating group", error.message);
             setError('Failed to create group');
@@ -586,6 +589,8 @@ const LabourManagement = () => {
                 group.id === editingGroup.id ? response.data : group
             ));
             setEditingGroup(null);
+            setSuccess(t('groupUpdatedSuccessfully') || 'Group updated successfully');
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             logger.error("Error updating group", error.message);
             setError('Failed to update group');
@@ -621,6 +626,8 @@ const LabourManagement = () => {
                 phone: ''
             });
             setShowLabourerForm(false);
+            setSuccess(t('labourerCreatedSuccessfully') || 'Labourer created successfully');
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             logger.error("Error creating labourer", error.message);
             setError('Failed to create labourer');
@@ -638,6 +645,8 @@ const LabourManagement = () => {
                 labourer.id === editingLabourer.id ? response.data : labourer
             ));
             setEditingLabourer(null);
+            setSuccess(t('labourerUpdatedSuccessfully') || 'Labourer updated successfully');
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             logger.error("Error updating labourer", error.message);
             setError('Failed to update labourer');
@@ -676,6 +685,8 @@ const LabourManagement = () => {
             });
             setShowPaymentForm(false);
             setSelectedLabourer(null);
+            setSuccess(t('paymentRecordedSuccessfully') || 'Payment recorded successfully');
+            setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             logger.error("Error creating payment", error.message);
             setError('Failed to create payment');
@@ -914,52 +925,54 @@ const LabourManagement = () => {
                             </button>
                         </div>
 
-                        {/* Group Form */}
-                        {(showGroupForm || editingGroup) && (
-                            <div className="card">
-                                <h3 className="text-lg font-medium text-earth-900 mb-4">
-                                    {editingGroup ? t('updateGroup') : t('createGroup')}
-                                </h3>
-                                <form onSubmit={editingGroup ? handleUpdateGroup : handleCreateGroup}>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                {t('groupName')}
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={editingGroup ? editingGroup.group_name : newGroup.group_name}
-                                                onChange={(e) => editingGroup
-                                                    ? setEditingGroup({ ...editingGroup, group_name: e.target.value })
-                                                    : setNewGroup({ ...newGroup, group_name: e.target.value })
-                                                }
-                                                className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                                placeholder={t('enterGroupName')}
-                                            />
-                                        </div>
+                        {/* Group Modal */}
+                        <Modal
+                            isOpen={showGroupForm || !!editingGroup}
+                            onClose={() => {
+                                setShowGroupForm(false);
+                                setEditingGroup(null);
+                            }}
+                            title={editingGroup ? t('updateGroup') : t('createGroup')}
+                        >
+                            <form onSubmit={editingGroup ? handleUpdateGroup : handleCreateGroup}>
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('groupName')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={editingGroup ? editingGroup.group_name : newGroup.group_name}
+                                            onChange={(e) => editingGroup
+                                                ? setEditingGroup({ ...editingGroup, group_name: e.target.value })
+                                                : setNewGroup({ ...newGroup, group_name: e.target.value })
+                                            }
+                                            className="input w-full"
+                                            placeholder={t('enterGroupName')}
+                                        />
                                     </div>
-                                    <div className="mt-4 flex space-x-3">
-                                        <button
-                                            type="submit"
-                                            className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
-                                        >
-                                            {editingGroup ? t('updateGroup') : t('createGroup')}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setShowGroupForm(false);
-                                                setEditingGroup(null);
-                                            }}
-                                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"
-                                        >
-                                            {t('cancel')}
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        )}
+                                </div>
+                                <div className="mt-6 flex justify-end space-x-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowGroupForm(false);
+                                            setEditingGroup(null);
+                                        }}
+                                        className="btn btn-secondary"
+                                    >
+                                        {t('cancel')}
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                    >
+                                        {editingGroup ? t('updateGroup') : t('createGroup')}
+                                    </button>
+                                </div>
+                            </form>
+                        </Modal>
 
                         {/* Groups List */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1023,115 +1036,117 @@ const LabourManagement = () => {
                             </button>
                         </div>
 
-                        {/* Labourer Form */}
-                        {(showLabourerForm || editingLabourer) && (
-                            <div className="card">
-                                <h3 className="text-lg font-medium text-earth-900 mb-4">
-                                    {editingLabourer ? t('updateLabourer') : t('createLabourer')}
-                                </h3>
-                                <form onSubmit={editingLabourer ? handleUpdateLabourer : handleCreateLabourer}>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                {t('name')}
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={editingLabourer ? editingLabourer.name : newLabourer.name}
-                                                onChange={(e) => editingLabourer
-                                                    ? setEditingLabourer({ ...editingLabourer, name: e.target.value })
-                                                    : setNewLabourer({ ...newLabourer, name: e.target.value })}
-                                                className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                                placeholder={t('enterName')}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                {t('village')}
-                                            </label>
-                                            <input
-                                                type="text"
-                                                required
-                                                value={editingLabourer ? editingLabourer.village : newLabourer.village}
-                                                onChange={(e) => editingLabourer
-                                                    ? setEditingLabourer({ ...editingLabourer, village: e.target.value })
-                                                    : setNewLabourer({ ...newLabourer, village: e.target.value })}
-                                                className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                                placeholder={t('enterVillage')}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                {t('groupName')}
-                                            </label>
-                                            <select
-                                                required
-                                                value={editingLabourer ? editingLabourer.group_id : newLabourer.group_id}
-                                                onChange={(e) => editingLabourer
-                                                    ? setEditingLabourer({ ...editingLabourer, group_id: e.target.value })
-                                                    : setNewLabourer({ ...newLabourer, group_id: e.target.value })}
-                                                className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                            >
-                                                <option value="">{t('selectGroup')}</option>
-                                                {labourGroups.map(group => (
-                                                    <option key={group.id} value={group.id}>{group.group_name}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                {t('dailyWage')}
-                                            </label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="0"
-                                                step="0.01"
-                                                value={editingLabourer ? editingLabourer.daily_wage : newLabourer.daily_wage}
-                                                onChange={(e) => editingLabourer
-                                                    ? setEditingLabourer({ ...editingLabourer, daily_wage: e.target.value })
-                                                    : setNewLabourer({ ...newLabourer, daily_wage: e.target.value })}
-                                                className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                                placeholder={t('enterDailyWage')}
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                {t('phoneNumber')}
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                value={editingLabourer ? editingLabourer.phone : newLabourer.phone}
-                                                onChange={(e) => editingLabourer
-                                                    ? setEditingLabourer({ ...editingLabourer, phone: e.target.value })
-                                                    : setNewLabourer({ ...newLabourer, phone: e.target.value })}
-                                                className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                                placeholder={t('enterPhoneNumber')}
-                                            />
-                                        </div>
+                        {/* Labourer Modal */}
+                        <Modal
+                            isOpen={showLabourerForm || !!editingLabourer}
+                            onClose={() => {
+                                setShowLabourerForm(false);
+                                setEditingLabourer(null);
+                            }}
+                            title={editingLabourer ? t('updateLabourer') : t('createLabourer')}
+                        >
+                            <form onSubmit={editingLabourer ? handleUpdateLabourer : handleCreateLabourer}>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('name')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={editingLabourer ? editingLabourer.name : newLabourer.name}
+                                            onChange={(e) => editingLabourer
+                                                ? setEditingLabourer({ ...editingLabourer, name: e.target.value })
+                                                : setNewLabourer({ ...newLabourer, name: e.target.value })}
+                                            className="input w-full"
+                                            placeholder={t('enterName')}
+                                        />
                                     </div>
-                                    <div className="mt-4 flex space-x-3">
-                                        <button
-                                            type="submit"
-                                            className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
-                                        >
-                                            {editingLabourer ? t('updateLabourer') : t('createLabourer')}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setShowLabourerForm(false);
-                                                setEditingLabourer(null);
-                                            }}
-                                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"
-                                        >
-                                            {t('cancel')}
-                                        </button>
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('village')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            required
+                                            value={editingLabourer ? editingLabourer.village : newLabourer.village}
+                                            onChange={(e) => editingLabourer
+                                                ? setEditingLabourer({ ...editingLabourer, village: e.target.value })
+                                                : setNewLabourer({ ...newLabourer, village: e.target.value })}
+                                            className="input w-full"
+                                            placeholder={t('enterVillage')}
+                                        />
                                     </div>
-                                </form>
-                            </div>
-                        )}
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('groupName')}
+                                        </label>
+                                        <select
+                                            required
+                                            value={editingLabourer ? editingLabourer.group_id : newLabourer.group_id}
+                                            onChange={(e) => editingLabourer
+                                                ? setEditingLabourer({ ...editingLabourer, group_id: e.target.value })
+                                                : setNewLabourer({ ...newLabourer, group_id: e.target.value })}
+                                            className="input w-full"
+                                        >
+                                            <option value="">{t('selectGroup')}</option>
+                                            {labourGroups.map(group => (
+                                                <option key={group.id} value={group.id}>{group.group_name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('dailyWage')}
+                                        </label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min="0"
+                                            step="0.01"
+                                            value={editingLabourer ? editingLabourer.daily_wage : newLabourer.daily_wage}
+                                            onChange={(e) => editingLabourer
+                                                ? setEditingLabourer({ ...editingLabourer, daily_wage: e.target.value })
+                                                : setNewLabourer({ ...newLabourer, daily_wage: e.target.value })}
+                                            className="input w-full"
+                                            placeholder={t('enterDailyWage')}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('phoneNumber')}
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            value={editingLabourer ? editingLabourer.phone : newLabourer.phone}
+                                            onChange={(e) => editingLabourer
+                                                ? setEditingLabourer({ ...editingLabourer, phone: e.target.value })
+                                                : setNewLabourer({ ...newLabourer, phone: e.target.value })}
+                                            className="input w-full"
+                                            placeholder={t('enterPhoneNumber')}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="mt-6 flex justify-end space-x-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowLabourerForm(false);
+                                            setEditingLabourer(null);
+                                        }}
+                                        className="btn btn-secondary"
+                                    >
+                                        {t('cancel')}
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                    >
+                                        {editingLabourer ? t('updateLabourer') : t('createLabourer')}
+                                    </button>
+                                </div>
+                            </form>
+                        </Modal>
 
                         {/* Labourers Organized by Groups */}
                         {labourGroups.length === 0 ? (
@@ -1580,76 +1595,77 @@ const LabourManagement = () => {
                                 </div>
                             </div>
                         )}
-                        {showPaymentForm && (
-                            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-                                    <h3 className="text-lg font-medium text-earth-900 mb-4">
-                                        {t('addPayment')} - {selectedLabourer?.name}
-                                    </h3>
-                                    <form onSubmit={handleCreatePayment}>
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                    {t('amount')}
-                                                </label>
-                                                <input
-                                                    type="number"
-                                                    required
-                                                    min="0"
-                                                    step="0.01"
-                                                    value={newPayment.amount}
-                                                    onChange={(e) => setNewPayment({ ...newPayment, amount: e.target.value })}
-                                                    className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                                    placeholder={t('enterAmount')}
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                    {t('paymentDate')}
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    required
-                                                    value={newPayment.payment_date}
-                                                    onChange={(e) => setNewPayment({ ...newPayment, payment_date: e.target.value })}
-                                                    className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="block text-sm font-medium text-earth-700 mb-2">
-                                                    {t('notes')}
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={newPayment.notes}
-                                                    onChange={(e) => setNewPayment({ ...newPayment, notes: e.target.value })}
-                                                    className="w-full px-3 py-2 border border-earth-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                                                    placeholder={t('enterNotes')}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="mt-6 flex space-x-3">
-                                            <button
-                                                type="submit"
-                                                className="flex-1 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
-                                            >
-                                                {t('createPayment')}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setShowPaymentForm(false);
-                                                    setSelectedLabourer(null);
-                                                }}
-                                                className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"
-                                            >
-                                                {t('cancel')}
-                                            </button>
-                                        </div>
-                                    </form>
+                        {/* Payment Modal */}
+                        <Modal
+                            isOpen={showPaymentForm}
+                            onClose={() => {
+                                setShowPaymentForm(false);
+                                setSelectedLabourer(null);
+                            }}
+                            title={`${t('addPayment')} - ${selectedLabourer?.name}`}
+                        >
+                            <form onSubmit={handleCreatePayment}>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('amount')} (₹)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            required
+                                            min="0"
+                                            step="0.01"
+                                            value={newPayment.amount}
+                                            onChange={(e) => setNewPayment({ ...newPayment, amount: e.target.value })}
+                                            className="input w-full"
+                                            placeholder={t('enterAmount')}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('paymentDate')}
+                                        </label>
+                                        <input
+                                            type="date"
+                                            required
+                                            value={newPayment.payment_date}
+                                            onChange={(e) => setNewPayment({ ...newPayment, payment_date: e.target.value })}
+                                            className="input w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-earth-700 mb-2">
+                                            {t('notes')}
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={newPayment.notes}
+                                            onChange={(e) => setNewPayment({ ...newPayment, notes: e.target.value })}
+                                            className="input w-full"
+                                            placeholder={t('enterNotes')}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                                <div className="mt-6 flex justify-end space-x-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setShowPaymentForm(false);
+                                            setSelectedLabourer(null);
+                                        }}
+                                        className="btn btn-secondary"
+                                    >
+                                        {t('cancel')}
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                    >
+                                        {t('createPayment')}
+                                    </button>
+                                </div>
+                            </form>
+                        </Modal>
                     </div>
                 )}
 
