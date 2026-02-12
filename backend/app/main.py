@@ -55,6 +55,8 @@ if settings.ALLOWED_ORIGINS:
 else:
     # Development fallback
     allowed_origins = [
+        "https://127.0.0.1:3000",
+        "https://localhost:3000",
         "https://kisansetu.pages.dev",
         "https://kisansetu.synapticpush.indevs.in"
     ]
