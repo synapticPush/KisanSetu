@@ -329,8 +329,8 @@ const LotNumbers = () => {
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 gap-6 mb-8">
-                    <div className="card">
-                        <div className="text-center p-4">
+                    <div className="card p-5 md:p-6">
+                        <div className="text-center">
                             <p className="text-sm text-earth-600 mb-1">{t('totalLots')}</p>
                             <p className="text-2xl font-bold text-earth-900">{getTotalLots()}</p>
                         </div>
@@ -339,7 +339,7 @@ const LotNumbers = () => {
                 </div>
 
                 {/* Filters and Search */}
-                <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+                <div className="bg-white rounded-lg shadow-sm p-5 md:p-6 mb-6">
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1">
                             <input
@@ -668,7 +668,7 @@ const LotNumbers = () => {
                         </div>
                     ) : (
                         filteredLotNumbers.map(lot => (
-                            <div key={lot.id} className="card">
+                            <div key={lot.id} className="card p-5 md:p-6">
                                 <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-0">
                                     <div className="flex-1 w-full">
                                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">

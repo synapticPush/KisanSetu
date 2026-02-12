@@ -979,7 +979,7 @@ const LabourManagement = () => {
                             {labourGroups.map(group => {
                                 const groupLabourers = getLabourersByGroup(group.id);
                                 return (
-                                    <div key={group.id} className="card">
+                                    <div key={group.id} className="card p-5 md:p-6">
                                         <div className="flex justify-between items-start mb-4">
                                             <div>
                                                 <h3 className="text-lg font-medium text-earth-900">{group.group_name}</h3>
@@ -1294,7 +1294,7 @@ const LabourManagement = () => {
                                                         {groupLabourers.map(labourer => {
                                                             const stats = getLabourerStats(labourer.id);
                                                             return (
-                                                                <div key={labourer.id} className="card">
+                                                                <div key={labourer.id} className="card p-5 md:p-6">
                                                                     <div className="flex justify-between items-start mb-4">
                                                                         <div>
                                                                             <h4 className="text-lg font-medium text-earth-900">{labourer.name}</h4>
@@ -1681,7 +1681,7 @@ const LabourManagement = () => {
                             </button>
                         </div>
 
-                        <div className="card">
+                        <div className="card p-5 md:p-6">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-earth-700 mb-2">
@@ -1818,7 +1818,7 @@ const LabourManagement = () => {
                             </button>
                         </div>
 
-                        <div className="card">
+                        <div className="card p-5 md:p-6">
                             <div className="flex flex-wrap items-end gap-4 mb-6">
                                 <div>
                                     <label className="block text-sm font-medium text-earth-700 mb-2">

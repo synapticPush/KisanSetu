@@ -187,15 +187,10 @@ const Dashboard = () => {
     };
 
     return (
-        <main className="bg-earth-50 min-h-screen pb-8">
-            <div className="container-md">
-                {/* Page Header
-                <div className="mb-6 mt-6">
-                    <p className="text-earth-600 text-sm sm:text-base md:text-sm">{t('overview')}</p>
-                </div> */}
-
+        <main className="bg-gradient-to-b from-earth-50 to-earth-100 min-h-screen pb-8">
+            <div className="container-md px-4 md:px-6">
                 {/* Main Stats - Mobile Friendly Grid */}
-                <div className="stats-grid mb-6 text-sm md:text-base">
+                <div className="stats-grid mb-6 pt-6 text-sm md:text-base">
                     <StatCard
                         title={t('totalFields')}
                         value={data.total_fields || 0}
@@ -234,7 +229,7 @@ const Dashboard = () => {
                     title={t('yieldByPotatoType')}
                     subtitle={t('yieldDistributionSubtitle') || 'Distribution of yield across potato categories'}
                 >
-                    <div className="card-grid">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                         <DataCard
                             title={t('large')}
                             value={potatoTypes.large || 0}
@@ -260,10 +255,10 @@ const Dashboard = () => {
                             status="active"
                         />
                     </div>
-                    <div className="mt-6 pt-6 border-t border-earth-200">
+                    <div className="mt-6 pt-6 border-t-2 border-earth-200 bg-gradient-to-r from-primary-50 to-transparent rounded-lg p-4">
                         <div className="flex items-center justify-between">
-                            <span className="text-base sm:text-lg md:text-base font-semibold text-earth-700">{t('totalYieldLabel')}</span>
-                            <span className="text-xl sm:text-2xl md:text-xl font-bold text-primary-600">{data.total_yield || 0} {t('packets')}</span>
+                            <span className="text-base font-bold text-earth-700 uppercase tracking-wide">{t('totalYieldLabel')}</span>
+                            <span className="text-2xl font-extrabold text-primary-700">{data.total_yield || 0} {t('packets')}</span>
                         </div>
                     </div>
                 </SectionCard>
@@ -316,36 +311,53 @@ const Dashboard = () => {
 
                         {/* Current Weather - Prominent Display */}
                         {weatherData?.current && (
-                            <div className="card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 mb-4 p-6">
-                                <div className="grid grid-cols-3 gap-4">
-                                    <div className="col-span-2">
-                                        <p className="text-earth-600 text-xs md:text-xs font-semibold uppercase tracking-wide mb-1">
+                            <div className="bg-gradient-to-br from-blue-50 via-blue-100 to-indigo-100 border-2 border-blue-200 rounded-2xl shadow-lg mb-6 p-6">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {/* Temperature and Condition */}
+                                    <div className="md:col-span-2">
+                                        <p className="text-blue-700 text-xs font-bold uppercase tracking-wider mb-2">
                                             {t('currentWeather')}
                                         </p>
-                                        <p className="text-3xl md:text-2xl font-bold text-earth-900 mb-1">
-                                            {weatherData.current.temperature}°C
-                                        </p>
-                                        <p className="text-base md:text-sm font-semibold text-earth-700 mb-2">
+                                        <div className="flex items-end gap-2 mb-3">
+                                            <p className="text-5xl font-black text-earth-900">
+                                                {weatherData.current.temperature}°
+                                            </p>
+                                            <p className="text-2xl font-bold text-earth-700 mb-2">C</p>
+                                        </div>
+                                        <p className="text-xl font-bold text-earth-800 mb-3">
                                             {weatherData.current.condition}
                                         </p>
-                                        <p className="text-earth-600 text-xs md:text-xs">
-                                            📍 {weatherData.current.location}
+                                        <p className="text-earth-700 text-sm font-medium flex items-center gap-2">
+                                            <span className="text-base">📍</span>
+                                            {weatherData.current.location}
                                         </p>
                                     </div>
-                                    <div className="flex flex-col items-center justify-center">
-                                        <div className="text-5xl mb-2">
-                                            {getWeatherIcon(weatherData.current.condition)}
+                                    
+                                    {/* Weather Icon */}
+                                    <div className="flex items-center justify-center">
+                                        <div className="p-6 bg-white/40 backdrop-blur-md rounded-2xl shadow-md">
+                                            <div className="text-6xl">
+                                                {getWeatherIcon(weatherData.current.condition)}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mt-4 pt-4 border-t border-blue-200 grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-xs text-earth-600 mb-1">Humidity</p>
-                                        <p className="text-lg font-bold text-earth-900">💧 {weatherData.current.humidity}%</p>
+                                
+                                {/* Additional Details */}
+                                <div className="mt-6 pt-6 border-t-2 border-blue-200 grid grid-cols-2 gap-4">
+                                    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-4 shadow-sm">
+                                        <p className="text-xs text-blue-700 font-bold uppercase mb-1.5">Humidity</p>
+                                        <p className="text-2xl font-extrabold text-earth-900 flex items-center gap-2">
+                                            <span>💧</span>
+                                            <span>{weatherData.current.humidity}%</span>
+                                        </p>
                                     </div>
-                                    <div>
-                                        <p className="text-xs text-earth-600 mb-1">Wind Speed</p>
-                                        <p className="text-lg font-bold text-earth-900">💨 {weatherData.current.wind_speed}km/h</p>
+                                    <div className="bg-white/30 backdrop-blur-sm rounded-xl p-4 shadow-sm">
+                                        <p className="text-xs text-blue-700 font-bold uppercase mb-1.5">Wind Speed</p>
+                                        <p className="text-2xl font-extrabold text-earth-900 flex items-center gap-2">
+                                            <span>💨</span>
+                                            <span>{weatherData.current.wind_speed}km/h</span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -353,27 +365,28 @@ const Dashboard = () => {
 
                         {/* Weather Forecast - Scrollable Cards */}
                         {weatherData?.forecast && (
-                            <div className="mb-4">
-                                <p className="text-sm font-semibold text-earth-700 mb-3">{t('sevenDayForecast') || '7-Day Forecast'}</p>
-                                <div className="flex overflow-x-auto gap-3 pb-2">
+                            <div className="mb-6">
+                                <p className="text-base font-bold text-earth-900 mb-4">{t('sevenDayForecast') || '7-Day Forecast'}</p>
+                                <div className="flex overflow-x-auto gap-3 pb-3">
                                     {weatherData.forecast.map((weather, index) => (
                                         <div
                                             key={index}
-                                            className="flex-shrink-0 card p-3 min-w-[120px] text-center"
+                                            className="flex-shrink-0 bg-gradient-to-br from-earth-50 to-white border-2 border-earth-200 rounded-xl p-4 min-w-[140px] text-center shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
                                         >
-                                            <p className="text-xs font-bold text-earth-700 mb-1">{weather.day}</p>
-                                            <p className="text-xs text-earth-500 mb-2">{weather.date}</p>
-                                            <div className="mb-2">
-                                                <div className="w-10 h-10 mx-auto">
+                                            <p className="text-xs font-bold text-earth-900 mb-1">{weather.day}</p>
+                                            <p className="text-xs text-earth-600 font-medium mb-3">{weather.date}</p>
+                                            <div className="mb-3">
+                                                <div className="w-12 h-12 mx-auto bg-white/50 rounded-full flex items-center justify-center shadow-sm">
                                                     {getWeatherIcon(weather.condition)}
                                                 </div>
                                             </div>
-                                            <p className="text-xs text-earth-600 mb-2 break-words">{weather.condition}</p>
-                                            <p className="text-sm font-bold text-earth-900">
+                                            <p className="text-xs text-earth-700 font-medium mb-3 break-words min-h-[32px] flex items-center justify-center">{weather.condition}</p>
+                                            <p className="text-xl font-extrabold text-earth-900 mb-1">
                                                 {weather.temp_max}°C
                                             </p>
-                                            <p className="text-xs text-earth-500">
-                                                {weather.humidity}% 💧
+                                            <p className="text-xs text-earth-600 font-medium flex items-center justify-center gap-1">
+                                                <span>💧</span>
+                                                <span>{weather.humidity}%</span>
                                             </p>
                                         </div>
                                     ))}

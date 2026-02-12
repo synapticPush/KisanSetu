@@ -286,20 +286,20 @@ const Borrowings = () => {
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="card">
-                        <div className="text-center p-4">
+                    <div className="card p-5 md:p-6">
+                        <div className="text-center">
                             <p className="text-sm text-earth-600 mb-1">{t('totalBorrowed')}</p>
                             <p className="text-2xl font-bold text-earth-900">{formatCurrency(totalBorrowed)}</p>
                         </div>
                     </div>
-                    <div className="card">
-                        <div className="text-center p-4">
+                    <div className="card p-5 md:p-6">
+                        <div className="text-center">
                             <p className="text-sm text-earth-600 mb-1">{t('totalReturned')}</p>
                             <p className="text-2xl font-bold text-green-600">{formatCurrency(totalReturned)}</p>
                         </div>
                     </div>
-                    <div className="card">
-                        <div className="text-center p-4">
+                    <div className="card p-5 md:p-6">
+                        <div className="text-center">
                             <p className="text-sm text-earth-600 mb-1">{t('pendingReturns')}</p>
                             <p className="text-2xl font-bold text-red-600">{formatCurrency(totalPending)}</p>
                         </div>
