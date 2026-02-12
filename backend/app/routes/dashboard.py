@@ -5,6 +5,7 @@ from app.models.field import Field
 from app.models.yield_model import Yield
 from app.models.labour import Task, Payment, LabourAttendance, Labourer
 from app.models.money import MoneyRecord
+from app.models.transportation import Transportation
 from app.db import get_db
 from app.utils.jwt import get_current_user
 import requests
@@ -96,12 +97,26 @@ def get_dashboard_data(db: Session = Depends(get_db), current_user: dict = Depen
     price_per_packet = 50
     profit_loss = (total_yield * price_per_packet) - (total_labour_cost or 0) - (total_expenses or 0)
 
+    # Total transported packets
+    transport_data = db.query(
+        func.sum(Transportation.small_packets),
+        func.sum(Transportation.medium_packets),
+        func.sum(Transportation.large_packets),
+        func.sum(Transportation.overlarge_packets)
+    ).join(Field).filter(Field.user_id == current_user["id"]).first()
+
+    if transport_data:
+        total_transported = (transport_data[0] or 0) + (transport_data[1] or 0) + (transport_data[2] or 0) + (transport_data[3] or 0)
+    else:
+        total_transported = 0
+
     # Get weather forecast
     weather_forecast = get_weather_forecast()
 
     return {
         "total_fields": total_fields or 0,
         "total_yield": total_yield,
+        "total_transported": total_transported,
         "potato_types": {
             "large": total_large,
             "medium": total_medium,
