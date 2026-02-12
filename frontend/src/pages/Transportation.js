@@ -89,7 +89,7 @@ const Transportation = () => {
                 notes: ''
             });
             setShowAddForm(false);
-            setSuccess('Transportation record added successfully! Lot numbers updated accordingly.');
+            setSuccess(t('transportationAddedSuccessfully'));
 
             // Clear success message after 3 seconds
             setTimeout(() => setSuccess(''), 3000);

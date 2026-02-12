@@ -601,7 +601,7 @@ const LabourManagement = () => {
         try {
             await api.delete(`/labour/groups/${id}`);
             setLabourGroups(labourGroups.filter(group => group.id !== id));
-            setSuccess('Labour group deleted successfully');
+            setSuccess(t('labourGroupDeletedSuccessfully') || 'Labour group deleted successfully');
             setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             logger.error("Error deleting group", error.message);
@@ -657,7 +657,7 @@ const LabourManagement = () => {
         try {
             await api.delete(`/labour/labourers/${id}`);
             setLabourers(labourers.filter(labourer => labourer.id !== id));
-            setSuccess('Labourer deleted successfully');
+            setSuccess(t('labourerDeletedSuccessfully') || 'Labourer deleted successfully');
             setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             logger.error("Error deleting labourer", error.message);

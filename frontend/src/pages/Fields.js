@@ -29,6 +29,7 @@ const Fields = () => {
     const [showAddForm, setShowAddForm] = useState(false);
     const [showYieldForm, setShowYieldForm] = useState(null);
     const [editingYieldFieldId, setEditingYieldFieldId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchFields();
@@ -155,14 +156,14 @@ const Fields = () => {
                         y.id === response.data.id ? response.data : y
                     )
                 }));
-                setSuccess('Yield record updated successfully! Values have been summed with existing record.');
+                setSuccess(t('yieldUpdatedSummed'));
             } else {
                 // Backend created new record - add it to the state
                 setYields(prev => ({
                     ...prev,
                     [fieldId]: [...(prev[fieldId] || []), response.data]
                 }));
-                setSuccess('Yield record added successfully!');
+                setSuccess(t('yieldAddedSuccessfully'));
             }
 
             setNewYield({ date: '', large: '', medium: '', small: '', overlarge: '', notes: '' });
@@ -187,7 +188,7 @@ const Fields = () => {
                 delete newYields[id];
                 return newYields;
             });
-            setSuccess('Field deleted successfully');
+            setSuccess(t('fieldDeletedSuccessfully'));
             setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error deleting field:', error);
@@ -202,7 +203,7 @@ const Fields = () => {
                 ...prev,
                 [fieldId]: prev[fieldId].filter(y => y.id !== yieldId)
             }));
-            setSuccess('Yield record deleted successfully');
+            setSuccess(t('yieldDeletedSuccessfully'));
             setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error deleting yield:', error);
@@ -261,6 +262,10 @@ const Fields = () => {
         }, 0);
     };
 
+    const filteredFields = fields.filter(field =>
+        field.field_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="min-h-screen bg-earth-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -301,11 +306,25 @@ const Fields = () => {
                     </div>
                 )}
 
-                {/* Add Field Button */}
-                <div className="mb-6">
+                {/* Search and Add Field */}
+                <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div className="relative w-full sm:w-64">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg className="h-5 w-5 text-earth-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input
+                            type="text"
+                            className="input w-full pl-10"
+                            placeholder={t('searchFields')}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
                     <button
                         onClick={() => setShowAddForm(!showAddForm)}
-                        className="btn btn-primary"
+                        className="btn btn-primary w-full sm:w-auto"
                     >
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -689,8 +708,21 @@ const Fields = () => {
                                 {t('addYourFirstField')}
                             </button>
                         </div>
+                    ) : filteredFields.length === 0 ? (
+                        <div className="card text-center py-12">
+                            <svg className="w-12 h-12 text-earth-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <h3 className="text-lg font-medium text-earth-900 mb-2">{t('noFieldsFound')}</h3>
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className="btn btn-secondary mt-2"
+                            >
+                                {t('clear')}
+                            </button>
+                        </div>
                     ) : (
-                        fields.map((field) => (
+                        filteredFields.map((field) => (
                             <div key={field.id} className="card">
                                 <div className="px-6 py-4 border-b border-earth-200">
                                     <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0">

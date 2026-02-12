@@ -74,7 +74,7 @@ const Borrowings = () => {
             setBorrowings([...borrowings, response.data]);
             setNewBorrowing({ borrower_name: '', amount: '', borrow_date: '', expected_return_date: '', notes: '' });
             setShowAddForm(false);
-            setSuccess('Borrowing added successfully!');
+            setSuccess(t('borrowingAddedSuccessfully'));
             setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error creating borrowing:', error);
@@ -124,7 +124,7 @@ const Borrowings = () => {
             };
 
             const response = await api.put(`/borrowings/${editingBorrowing.id}`, updateData);
-            setSuccess('Borrowing updated successfully!');
+            setSuccess(t('borrowingUpdatedSuccessfully'));
             setTimeout(() => setSuccess(''), 5000);
             setBorrowings(borrowings.map(borrowing => borrowing.id === editingBorrowing.id ? response.data : borrowing));
             setEditingBorrowing(null);
@@ -150,7 +150,7 @@ const Borrowings = () => {
         try {
             await api.delete(`/borrowings/${id}`);
             setBorrowings(borrowings.filter((borrowing) => borrowing.id !== id));
-            setSuccess('Borrowing deleted successfully');
+            setSuccess(t('borrowingDeletedSuccessfully'));
             setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error deleting borrowing:', error);
@@ -198,7 +198,7 @@ const Borrowings = () => {
             setBorrowings(borrowings.map(borrowing => borrowing.id === id ? response.data : borrowing));
 
             // Show success message that auto-dismisses
-            setSuccess('Borrowing marked as returned and money record created successfully!');
+            setSuccess(t('borrowingReturnedSuccessfully'));
             setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error marking as returned:', error);
