@@ -24,13 +24,13 @@ const Modal = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end md:items-center justify-center p-0 md:p-4 animate-fade-in">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 animate-fade-in">
       <div
-        className={`bg-white rounded-t-2xl md:rounded-xl shadow-lg w-full md:w-auto md:${sizeClasses[size]} max-h-[90vh] overflow-y-auto animate-slide-up md:animate-bounce-in`}
+        className={`bg-white rounded-xl shadow-lg w-full md:w-auto md:${sizeClasses[size]} max-h-[90vh] overflow-y-auto animate-bounce-in relative z-50`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-earth-200 px-4 md:px-6 py-4 md:py-5 flex items-center justify-between z-10 rounded-t-2xl md:rounded-t-xl">
+        <div className="sticky top-0 bg-white border-b border-earth-200 px-4 md:px-6 py-4 md:py-5 flex items-center justify-between z-10 rounded-t-xl">
           <h2 className="text-lg md:text-base font-bold text-earth-900">
             {title}
           </h2>
