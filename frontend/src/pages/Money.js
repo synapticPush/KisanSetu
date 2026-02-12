@@ -380,7 +380,7 @@ const Money = () => {
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="card">
+                    <div className="card p-5 md:p-6">
                         <div className="flex items-center">
                             <div className="flex-shrink-0 bg-red-100 rounded-lg p-3">
                                 <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -393,7 +393,7 @@ const Money = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="card">
+                    <div className="card p-5 md:p-6">
                         <div className="flex items-center">
                             <div className="flex-shrink-0 bg-earth-100 rounded-lg p-3">
                                 <svg className="w-6 h-6 text-earth-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -406,7 +406,7 @@ const Money = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="card">
+                    <div className="card p-5 md:p-6">
                         <div className="flex items-center">
                             <div className="flex-shrink-0 bg-primary-100 rounded-lg p-3">
                                 <svg className="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
