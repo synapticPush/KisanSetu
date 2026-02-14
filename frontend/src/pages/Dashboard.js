@@ -4,8 +4,8 @@ import { fetchWeatherData } from '../services/weather';
 import { useLanguage } from '../contexts/AppContext';
 import { StatCard, DataCard, SectionCard, InfoBox } from '../components/Cards';
 import Button from '../components/Button';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { getDailyReportData } from '../utils/activityTracker';
 
 const Dashboard = () => {
@@ -72,8 +72,21 @@ const Dashboard = () => {
 
     const handleDownloadReport = () => {
         try {
+            console.log('Starting PDF generation...');
+            
+            // Check if localStorage is available
+            if (typeof localStorage === 'undefined') {
+                throw new Error('localStorage is not available');
+            }
+            
+            const reportData = getDailyReportData();
+            console.log('Report data retrieved:', reportData);
+            
+            if (!reportData) {
+                throw new Error('Unable to retrieve report data');
+            }
+            
             const doc = new jsPDF();
-            const reportData = getDailyReportData(); // Get ONLY today's data
             const dateStr = new Date().toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN');
             const timeStr = new Date().toLocaleTimeString(language === 'hi' ? 'hi-IN' : 'en-IN');
 
@@ -118,7 +131,7 @@ const Dashboard = () => {
                     tableRows.push(activityData);
                 });
 
-                doc.autoTable({
+                autoTable(doc, {
                     head: [tableColumn],
                     body: tableRows,
                     startY: startY,
@@ -149,9 +162,11 @@ const Dashboard = () => {
             doc.save(filename);
             
             console.log(`Report generated successfully: ${filename}`);
+            alert(`Report downloaded: ${reportData.length} activities recorded today`);
         } catch (error) {
             console.error('Error generating PDF report:', error);
-            alert('Failed to generate PDF report. Please try again.');
+            console.error('Error details:', error.message, error.stack);
+            alert(`Failed to generate PDF report: ${error.message}. Please check console for details.`);
         }
     };
 

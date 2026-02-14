@@ -132,11 +132,30 @@ const saveLog = (entry) => {
 
 export const getDailyReportData = () => {
     try {
-        const logs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        console.log('getDailyReportData: Starting to retrieve data...');
+        
+        if (typeof localStorage === 'undefined') {
+            console.error('localStorage is not available');
+            return [];
+        }
+        
+        const rawData = localStorage.getItem(STORAGE_KEY);
+        console.log('getDailyReportData: Raw localStorage data:', rawData);
+        
+        const logs = JSON.parse(rawData || '[]');
+        console.log('getDailyReportData: Parsed logs:', logs);
+        
         const today = new Date().toISOString().split('T')[0];
+        console.log('getDailyReportData: Today\'s date:', today);
+        
+        const todaysLogs = logs.filter(log => log.timestamp && log.timestamp.startsWith(today));
+        console.log('getDailyReportData: Today\'s filtered logs:', todaysLogs);
+        
         // Return latest first
-        return logs.filter(log => log.timestamp.startsWith(today)).reverse();
+        return todaysLogs.reverse();
     } catch (e) {
+        console.error('getDailyReportData: Error occurred:', e);
+        console.error('Error details:', e.message, e.stack);
         return [];
     }
 }
