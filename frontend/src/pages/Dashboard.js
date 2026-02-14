@@ -201,21 +201,6 @@ const Dashboard = () => {
                     </svg>
                 );
             default:
-                
-                {/* Daily Report Button */}
-                <div className="flex justify-end pt-6">
-                     <button
-                        onClick={handleDownloadReport}
-                        className="flex items-center gap-2 bg-earth-600 hover:bg-earth-700 text-white font-medium py-2 px-4 rounded-lg transition-colors shadow-sm"
-                        title={t('downloadDailyReport')}
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        {t('dailyReport')}
-                    </button>
-                </div>
-
                 return (
                     <svg className="w-8 h-8 mx-auto text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
@@ -256,6 +241,21 @@ const Dashboard = () => {
     return (
         <main className="bg-gradient-to-b from-earth-50 to-earth-100 min-h-screen pb-8">
             <div className="container-md px-4 md:px-6">
+
+                {/* Daily Report Button */}
+                <div className="flex justify-end pt-6">
+                     <button
+                        onClick={handleDownloadReport}
+                        className="flex items-center gap-2 bg-earth-600 hover:bg-earth-700 text-white font-medium py-2 px-4 rounded-lg transition-colors shadow-sm"
+                        title={t('downloadDailyReport')}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        {t('dailyReport')}
+                    </button>
+                </div>
+
                 {/* Main Stats - Mobile Friendly Grid */}
                 <div className="stats-grid mb-6 pt-6 text-sm md:text-base">
                     <StatCard
