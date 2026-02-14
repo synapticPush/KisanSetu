@@ -71,53 +71,88 @@ const Dashboard = () => {
     };
 
     const handleDownloadReport = () => {
-        const doc = new jsPDF();
-        const reportData = getDailyReportData(); // Get ONLY today's data
-        const dateStr = new Date().toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN');
-        const timeStr = new Date().toLocaleTimeString(language === 'hi' ? 'hi-IN' : 'en-IN');
+        try {
+            const doc = new jsPDF();
+            const reportData = getDailyReportData(); // Get ONLY today's data
+            const dateStr = new Date().toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN');
+            const timeStr = new Date().toLocaleTimeString(language === 'hi' ? 'hi-IN' : 'en-IN');
 
-        // Add Title
-        doc.setFontSize(18);
-        doc.text(`${t('appName') || 'KisanSetu'} - ${language === 'hi' ? 'Daily Report' : 'Daily Report'}`, 14, 22);
-        
-        doc.setFontSize(12);
-        doc.text(`${language === 'hi' ? 'Date' : 'Date'}: ${dateStr}`, 14, 30);
-        doc.text(`${language === 'hi' ? 'Generated At' : 'Generated At'}: ${timeStr}`, 14, 38);
+            // Set default font
+            doc.setFont('helvetica');
+            
+            // Add Title
+            doc.setFontSize(18);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`${t('appName') || 'KisanSetu'} - Daily Report`, 14, 22);
+            
+            // Add metadata
+            doc.setFontSize(11);
+            doc.setTextColor(80, 80, 80);
+            doc.text(`Date: ${dateStr}`, 14, 30);
+            doc.text(`Generated At: ${timeStr}`, 14, 36);
 
-        if (language === 'hi') {
-            doc.setFontSize(10);
-            doc.setTextColor(100);
-            doc.text("(Note: PDF content is generated in English for better compatibility)", 14, 15);
-            doc.setTextColor(0);
+            // Add note for Hindi users (positioned after header)
+            if (language === 'hi') {
+                doc.setFontSize(9);
+                doc.setTextColor(120, 120, 120);
+                doc.text("(Note: PDF content is in English for better compatibility)", 14, 42);
+            }
+
+            const startY = language === 'hi' ? 50 : 45;
+
+            if (reportData.length === 0) {
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.text("No new activities recorded for today.", 14, startY);
+            } else {
+                const tableColumn = ["Time", "Feature", "Action", "Details"];
+                const tableRows = [];
+
+                reportData.forEach(log => {
+                    const activityData = [
+                        log.time || 'N/A',
+                        log.feature || 'N/A',
+                        log.action || 'N/A',
+                        log.details || 'N/A'
+                    ];
+                    tableRows.push(activityData);
+                });
+
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: startY,
+                    theme: 'grid',
+                    headStyles: { 
+                        fillColor: [66, 133, 244],
+                        textColor: [255, 255, 255],
+                        fontSize: 11,
+                        fontStyle: 'bold'
+                    },
+                    styles: { 
+                        fontSize: 10, 
+                        cellPadding: 3,
+                        font: 'helvetica',
+                        textColor: [0, 0, 0]
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 25 },  // Time
+                        1: { cellWidth: 45 },  // Feature
+                        2: { cellWidth: 25 },  // Action
+                        3: { cellWidth: 'auto' } // Details
+                    }
+                });
+            }
+
+            // Force download
+            const filename = `daily_report_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(filename);
+            
+            console.log(`Report generated successfully: ${filename}`);
+        } catch (error) {
+            console.error('Error generating PDF report:', error);
+            alert('Failed to generate PDF report. Please try again.');
         }
-
-        if (reportData.length === 0) {
-            doc.text(language === 'hi' ? "No activities found for today." : "No new activities recorded for today.", 14, 50);
-        } else {
-             const tableColumn = ["Time", "Feature", "Action", "Details"];
-             const tableRows = [];
-
-             reportData.forEach(log => {
-                 const activityData = [
-                     log.time,
-                     log.feature,
-                     log.action,
-                     log.details
-                 ];
-                 tableRows.push(activityData);
-             });
-
-             doc.autoTable({
-                 head: [tableColumn],
-                 body: tableRows,
-                 startY: 45,
-                 theme: 'grid',
-                 headStyles: { fillColor: [66, 133, 244] }, // Google blueish
-                 styles: { fontSize: 10, cellPadding: 3 },
-             });
-        }
-
-        doc.save(`daily_report_${new Date().toISOString().split('T')[0]}.pdf`);
     };
 
     if (loading || weatherLoading) {
