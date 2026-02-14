@@ -509,6 +509,27 @@ const translations = {
     addYourFirstBorrowing: 'Add your first borrowing',
     borrowingRecordNotFound: 'Borrowing record not found',
     alreadyReturned: 'This borrowing has already been marked as returned',
+    
+    // New Borrowing Keys
+    borrowerName: 'Borrower Name',
+    enterBorrowerName: 'Enter borrower name',
+    borrowDate: 'Borrow Date',
+    expectedReturnDate: 'Expected Return Date',
+    actualReturn: 'Actual Return',
+    actualReturnDate: 'Actual Return Date',
+    returned: 'Returned',
+    noBorrowingRecordsYet: 'No borrowing records yet',
+    startTrackingBorrowings: 'Start tracking your borrowings by adding your first record',
+    borrowedOn: 'Borrowed on',
+    expectedReturn: 'Expected return',
+    returnedOn: 'Returned on',
+    markReturned: 'Mark Returned',
+    pleaseFillRequiredFieldsBorrowing: 'Please fill in all required fields: Borrower Name, Amount, and Borrow Date',
+    enterValidAmount: 'Please enter a valid amount greater than 0',
+    failedToCreateBorrowing: 'Failed to create borrowing record. Please try again.',
+    failedToUpdateBorrowing: 'Failed to update borrowing record. Please try again.',
+    failedToDeleteBorrowing: 'Failed to delete borrowing record. Please try again.',
+    failedToReturnBorrowing: 'Failed to update borrowing status and create money record. Please try again.',
 
     // Lot Numbers
     lotNumbersManagement: 'Lot Numbers Management',
@@ -689,7 +710,14 @@ const translations = {
     enterMediumPotatoes: 'Enter medium potatoes',
     enterSmallPotatoes: 'Enter small potatoes',
     enterOverlargePotatoes: 'Enter overlarge potatoes',
-    optionalNotes: 'Optional notes'
+    optionalNotes: 'Optional notes',
+    
+    // Daily Report
+    dailyReport: 'Daily Report (PDF)',
+    downloadDailyReport: 'Download today\'s activity report',
+    noActivitiesToday: 'No new activities recorded for today.',
+    reportGeneratedAt: 'Generated at',
+    reportDate: 'Report Date'
   },
   hi: {
     // App
@@ -1285,6 +1313,27 @@ const translations = {
     borrowingRecordNotFound: 'उधार रिकॉर्ड नहीं मिला',
     alreadyReturned: 'यह उधार पहले ही वापस कर दिया गया है',
 
+    // New Borrowing Keys (Hindi)
+    borrowerName: 'उधारकर्ता का नाम',
+    enterBorrowerName: 'उधारकर्ता का नाम दर्ज करें',
+    borrowDate: 'उधार की तारीख',
+    expectedReturnDate: 'अपेक्षित वापसी तिथि',
+    actualReturn: 'वास्तविक वापसी',
+    actualReturnDate: 'वास्तविक वापसी तिथि',
+    returned: 'लौटाया गया',
+    noBorrowingRecordsYet: 'अभी तक कोई उधार रिकॉर्ड नहीं',
+    startTrackingBorrowings: 'अपना पहला रिकॉर्ड जोड़कर अपनी उधारी को ट्रैक करना शुरू करें',
+    borrowedOn: 'को उधार लिया',
+    expectedReturn: 'अपेक्षित वापसी',
+    returnedOn: 'को वापस किया गया',
+    markReturned: 'वापस चिह्नित करें',
+    pleaseFillRequiredFieldsBorrowing: 'कृपया सभी आवश्यक फ़ील्ड भरें: उधारकर्ता का नाम, राशि और उधार की तारीख',
+    enterValidAmount: 'कृपया 0 से अधिक मान्य राशि दर्ज करें',
+    failedToCreateBorrowing: 'उधार रिकॉर्ड बनाने में विफल। कृपया पुन: प्रयास करें।',
+    failedToUpdateBorrowing: 'उधार रिकॉर्ड अपडेट करने में विफल। कृपया पुन: प्रयास करें।',
+    failedToDeleteBorrowing: 'उधार रिकॉर्ड हटाने में विफल। कृपया पुन: प्रयास करें।',
+    failedToReturnBorrowing: 'उधार स्थिति अपडेट करने और मनी रिकॉर्ड बनाने में विफल। कृपया पुन: प्रयास करें।',
+
     // Lot Numbers
     lotNumbersManagement: 'लॉट नंबर प्रबंधन',
     lotNumberManagement: 'लॉट नंबर प्रबंधन', // Alternate key for compatibility
@@ -1375,7 +1424,14 @@ const translations = {
     enterMediumPotatoes: 'मध्यम आलू दर्ज करें',
     enterSmallPotatoes: 'छोटे आलू दर्ज करें',
     enterOverlargePotatoes: 'अतिबड़े आलू दर्ज करें',
-    optionalNotes: 'वैकल्पिक नोट्स'
+    optionalNotes: 'वैकल्पिक नोट्स',
+
+    // Daily Report (Hindi)
+    dailyReport: 'दैनिक रिपोर्ट (PDF)',
+    downloadDailyReport: 'आज की गतिविधि रिपोर्ट डाउनलोड करें',
+    noActivitiesToday: 'आज के लिए कोई नई गतिविधि दर्ज नहीं की गई।',
+    reportGeneratedAt: 'तैयार किया गया समय',
+    reportDate: 'रिपोर्ट की तारीख'
   }
 };
 

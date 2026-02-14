@@ -1,5 +1,6 @@
 import axios from 'axios';
 import logger from '../utils/logger';
+import { trackActivity } from '../utils/activityTracker';
 
 // Try different backend URLs for better connectivity
 const possibleBaseURLs = ["https://kisansetu-backend-vcuo.onrender.com"];
@@ -54,6 +55,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => {
         logger.api("Response", `${response.config.method?.toUpperCase()} ${response.config.url}`, response.status);
+        // Track activity for reports
+        trackActivity(response.config, response, response.status);
         return response;
     },
     async (error) => {

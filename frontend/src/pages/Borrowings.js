@@ -51,14 +51,14 @@ const Borrowings = () => {
         try {
             // Validate required fields
             if (!newBorrowing.borrower_name || !newBorrowing.amount || !newBorrowing.borrow_date) {
-                setError('Please fill in all required fields: Borrower Name, Amount, and Borrow Date');
+                setError(t('pleaseFillRequiredFieldsBorrowing'));
                 return;
             }
 
             // Validate amount
             const amount = parseFloat(newBorrowing.amount);
             if (isNaN(amount) || amount <= 0) {
-                setError('Please enter a valid amount greater than 0');
+                setError(t('enterValidAmount'));
                 return;
             }
 
@@ -80,7 +80,7 @@ const Borrowings = () => {
             console.error('Error creating borrowing:', error);
 
             // Extract specific error message from backend if available
-            let errorMessage = 'Failed to create borrowing record. Please try again.';
+            let errorMessage = t('failedToCreateBorrowing');
             if (error.response && error.response.data && error.response.data.detail) {
                 errorMessage = error.response.data.detail;
             } else if (error.response && error.response.data && error.response.data.message) {
@@ -102,14 +102,14 @@ const Borrowings = () => {
         try {
             // Validate required fields
             if (!editingBorrowing.borrower_name || !editingBorrowing.amount || !editingBorrowing.borrow_date) {
-                setError('Please fill in all required fields: Borrower Name, Amount, and Borrow Date');
+                setError(t('pleaseFillRequiredFieldsBorrowing'));
                 return;
             }
 
             // Validate amount
             const amount = parseFloat(editingBorrowing.amount);
             if (isNaN(amount) || amount <= 0) {
-                setError('Please enter a valid amount greater than 0');
+                setError(t('enterValidAmount'));
                 return;
             }
 
@@ -132,7 +132,7 @@ const Borrowings = () => {
             console.error('Error updating borrowing:', error);
 
             // Extract specific error message from backend if available
-            let errorMessage = 'Failed to update borrowing record. Please try again.';
+            let errorMessage = t('failedToUpdateBorrowing');
             if (error.response && error.response.data && error.response.data.detail) {
                 errorMessage = error.response.data.detail;
             } else if (error.response && error.response.data && error.response.data.message) {
@@ -154,7 +154,7 @@ const Borrowings = () => {
             setTimeout(() => setSuccess(''), 5000);
         } catch (error) {
             console.error('Error deleting borrowing:', error);
-            let errorMessage = 'Failed to delete borrowing record. Please try again.';
+            let errorMessage = t('failedToDeleteBorrowing');
             if (error.response && error.response.data && error.response.data.detail) {
                 errorMessage = error.response.data.detail;
             } else if (error.response && error.response.data && error.response.data.message) {
@@ -204,7 +204,7 @@ const Borrowings = () => {
             console.error('Error marking as returned:', error);
 
             // Extract specific error message from backend if available
-            let errorMessage = 'Failed to update borrowing status and create money record. Please try again.';
+            let errorMessage = t('failedToReturnBorrowing');
             if (error.response && error.response.data && error.response.data.detail) {
                 errorMessage = error.response.data.detail;
             } else if (error.response && error.response.data && error.response.data.message) {
@@ -315,7 +315,7 @@ const Borrowings = () => {
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>
-                        Add New Borrowing
+                        {t("addBorrowing")}
                     </button>
                 </div>
 
@@ -323,21 +323,21 @@ const Borrowings = () => {
                 <Modal
                     isOpen={showAddForm}
                     onClose={() => setShowAddForm(false)}
-                    title="Add New Borrowing"
+                    title={t("addNewBorrowing")}
                     size="lg"
                 >
                     <form onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label htmlFor="borrower_name" className="block text-sm font-medium text-earth-700 mb-2">
-                                    Borrower Name *
+                                    {t("borrowerName")} *
                                 </label>
                                 <input
                                     type="text"
                                     id="borrower_name"
                                     name="borrower_name"
                                     className="input"
-                                    placeholder="Enter borrower name"
+                                    placeholder={t("enterBorrowerName")}
                                     value={newBorrowing.borrower_name}
                                     onChange={handleInputChange}
                                     required
@@ -345,14 +345,14 @@ const Borrowings = () => {
                             </div>
                             <div>
                                 <label htmlFor="amount" className="block text-sm font-medium text-earth-700 mb-2">
-                                    Amount *
+                                    {t("amount")} *
                                 </label>
                                 <input
                                     type="number"
                                     id="amount"
                                     name="amount"
                                     className="input"
-                                    placeholder="Enter amount"
+                                    placeholder={t("enterAmount")}
                                     value={newBorrowing.amount}
                                     onChange={handleInputChange}
                                     required
@@ -361,7 +361,7 @@ const Borrowings = () => {
                             </div>
                             <div>
                                 <label htmlFor="borrow_date" className="block text-sm font-medium text-earth-700 mb-2">
-                                    Borrow Date *
+                                    {t("borrowDate")} *
                                 </label>
                                 <input
                                     type="date"
@@ -375,7 +375,7 @@ const Borrowings = () => {
                             </div>
                             <div>
                                 <label htmlFor="expected_return_date" className="block text-sm font-medium text-earth-700 mb-2">
-                                    Expected Return Date
+                                    {t("expectedReturnDate")}
                                 </label>
                                 <input
                                     type="date"
@@ -388,14 +388,14 @@ const Borrowings = () => {
                             </div>
                             <div className="md:col-span-2">
                                 <label htmlFor="notes" className="block text-sm font-medium text-earth-700 mb-2">
-                                    Notes
+                                    {t("notes")}
                                 </label>
                                 <textarea
                                     id="notes"
                                     name="notes"
                                     rows={3}
                                     className="input"
-                                    placeholder="Enter any additional notes"
+                                    placeholder={t("enterAnyAdditionalNotes")}
                                     value={newBorrowing.notes}
                                     onChange={handleInputChange}
                                 />
@@ -407,14 +407,14 @@ const Borrowings = () => {
                                 onClick={() => setShowAddForm(false)}
                                 className="btn btn-secondary"
                             >
-                                Cancel
+                                {t("cancel")}
                             </button>
                             <button
                                 type="submit"
                                 disabled={loading}
                                 className="btn btn-primary disabled:opacity-50"
                             >
-                                {loading ? 'Adding...' : 'Add Borrowing'}
+                                {loading ? t("adding") : t("addBorrowing")}
                             </button>
                         </div>
                     </form>
@@ -424,14 +424,14 @@ const Borrowings = () => {
                 <Modal
                     isOpen={!!editingBorrowing}
                     onClose={() => setEditingBorrowing(null)}
-                    title="Edit Borrowing"
+                    title={t("editBorrowing")}
                     size="lg"
                 >
                     {editingBorrowing && (
                         <form onSubmit={handleEditSubmit}>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-earth-700 mb-1">Borrower Name</label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t("borrowerName")}</label>
                                     <input
                                         type="text"
                                         name="borrower_name"
@@ -442,7 +442,7 @@ const Borrowings = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-earth-700 mb-1">Amount</label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t("amount")}</label>
                                     <input
                                         type="number"
                                         name="amount"
@@ -454,7 +454,7 @@ const Borrowings = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-earth-700 mb-1">Borrow Date</label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t("borrowDate")}</label>
                                     <input
                                         type="date"
                                         name="borrow_date"
@@ -465,7 +465,7 @@ const Borrowings = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-earth-700 mb-1">Expected Return</label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t("expectedReturn")}</label>
                                     <input
                                         type="date"
                                         name="expected_return_date"
@@ -475,7 +475,7 @@ const Borrowings = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-earth-700 mb-1">Actual Return</label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t("actualReturn")}</label>
                                     <input
                                         type="date"
                                         name="actual_return_date"
@@ -485,20 +485,20 @@ const Borrowings = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-earth-700 mb-1">Status</label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t("status")}</label>
                                     <select
                                         name="status"
                                         className="input"
                                         value={editingBorrowing.status}
                                         onChange={handleEditInputChange}
                                     >
-                                        <option value="pending">Pending</option>
-                                        <option value="returned">Returned</option>
-                                        <option value="overdue">Overdue</option>
+                                        <option value="pending">{t("pending")}</option>
+                                        <option value="returned">{t("returned")}</option>
+                                        <option value="overdue">{t("overdue")}</option>
                                     </select>
                                 </div>
                                 <div className="md:col-span-2">
-                                    <label className="block text-sm font-medium text-earth-700 mb-1">Notes</label>
+                                    <label className="block text-sm font-medium text-earth-700 mb-1">{t("notes")}</label>
                                     <textarea
                                         name="notes"
                                         rows={2}
@@ -514,14 +514,14 @@ const Borrowings = () => {
                                     onClick={() => setEditingBorrowing(null)}
                                     className="btn btn-secondary"
                                 >
-                                    Cancel
+                                    {t("cancel")}
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={loading}
                                     className="btn btn-primary disabled:opacity-50"
                                 >
-                                    {loading ? 'Saving...' : 'Save Changes'}
+                                    {loading ? t("saving") : t("saveChanges")}
                                 </button>
                             </div>
                         </form>
@@ -535,13 +535,13 @@ const Borrowings = () => {
                             <svg className="w-12 h-12 text-earth-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
-                            <h3 className="text-lg font-medium text-earth-900 mb-2">No borrowing records yet</h3>
-                            <p className="text-earth-600 mb-4">Start tracking your borrowings by adding your first record</p>
+                            <h3 className="text-lg font-medium text-earth-900 mb-2">{t("noBorrowingRecordsYet")}</h3>
+                            <p className="text-earth-600 mb-4">{t("startTrackingBorrowings")}</p>
                             <button
                                 onClick={() => setShowAddForm(true)}
                                 className="btn btn-primary"
                             >
-                                Add Your First Borrowing
+                                {t("addYourFirstBorrowing")}
                             </button>
                         </div>
                     ) : (
@@ -552,42 +552,42 @@ const Borrowings = () => {
                                         <div className="w-full sm:w-auto">
                                             <h3 className="text-lg font-medium text-earth-900 break-words">{borrowing.borrower_name}</h3>
                                             <p className="text-sm text-earth-600 mt-1">
-                                                {formatCurrency(borrowing.amount)} • Borrowed on {new Date(borrowing.borrow_date).toLocaleDateString('en-IN')}
+                                                {formatCurrency(borrowing.amount)} • {t("borrowedOn")} {new Date(borrowing.borrow_date).toLocaleDateString('en-IN')}
                                             </p>
                                             {borrowing.expected_return_date && (
                                                 <p className="text-sm text-earth-600">
-                                                    Expected return: {new Date(borrowing.expected_return_date).toLocaleDateString('en-IN')}
+                                                    {t("expectedReturn")}: {new Date(borrowing.expected_return_date).toLocaleDateString('en-IN')}
                                                 </p>
                                             )}
                                             {borrowing.actual_return_date && (
                                                 <p className="text-sm text-earth-600">
-                                                    Returned on: {new Date(borrowing.actual_return_date).toLocaleDateString('en-IN')}
+                                                    {t("returnedOn")}: {new Date(borrowing.actual_return_date).toLocaleDateString('en-IN')}
                                                 </p>
                                             )}
                                         </div>
                                         <div className="flex flex-wrap items-center gap-2 self-end sm:self-center">
                                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(borrowing.status)}`}>
-                                                {borrowing.status.charAt(0).toUpperCase() + borrowing.status.slice(1)}
+                                                {t(borrowing.status)}
                                             </span>
                                             <button
                                                 onClick={() => startEdit(borrowing)}
                                                 className="btn btn-secondary text-sm"
                                             >
-                                                Edit
+                                                {t("edit")}
                                             </button>
                                             {borrowing.status !== 'returned' && (
                                                 <button
                                                     onClick={() => handleMarkAsReturned(borrowing.id)}
                                                     className="btn btn-primary text-sm"
                                                 >
-                                                    Mark Returned
+                                                    {t("markReturned")}
                                                 </button>
                                             )}
                                             <button
                                                 onClick={() => handleDelete(borrowing.id)}
                                                 className="btn btn-secondary text-sm text-red-600 hover:text-red-900"
                                             >
-                                                Delete
+                                                {t("delete")}
                                             </button>
                                         </div>
                                     </div>
@@ -598,7 +598,7 @@ const Borrowings = () => {
                                 {borrowing.notes && (
                                     <div className="px-6 py-4 bg-earth-50">
                                         <p className="text-sm text-earth-600">
-                                            <span className="font-medium">Notes:</span> {borrowing.notes}
+                                            <span className="font-medium">{t("notes")}:</span> {borrowing.notes}
                                         </p>
                                     </div>
                                 )}

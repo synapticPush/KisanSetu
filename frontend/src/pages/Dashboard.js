@@ -4,6 +4,9 @@ import { fetchWeatherData } from '../services/weather';
 import { useLanguage } from '../contexts/AppContext';
 import { StatCard, DataCard, SectionCard, InfoBox } from '../components/Cards';
 import Button from '../components/Button';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import { getDailyReportData } from '../utils/activityTracker';
 
 const Dashboard = () => {
     const { t, language } = useLanguage();
@@ -47,7 +50,6 @@ const Dashboard = () => {
             setLocationPermission('granted');
         } catch (error) {
             console.error('Error fetching weather data:', error);
-
             // Handle specific location errors
             if (error.message.includes('Location access failed')) {
                 if (error.message.includes('denied')) {
@@ -66,6 +68,56 @@ const Dashboard = () => {
         } finally {
             setWeatherLoading(false);
         }
+    };
+
+    const handleDownloadReport = () => {
+        const doc = new jsPDF();
+        const reportData = getDailyReportData(); // Get ONLY today's data
+        const dateStr = new Date().toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN');
+        const timeStr = new Date().toLocaleTimeString(language === 'hi' ? 'hi-IN' : 'en-IN');
+
+        // Add Title
+        doc.setFontSize(18);
+        doc.text(`${t('appName') || 'KisanSetu'} - ${language === 'hi' ? 'Daily Report' : 'Daily Report'}`, 14, 22);
+        
+        doc.setFontSize(12);
+        doc.text(`${language === 'hi' ? 'Date' : 'Date'}: ${dateStr}`, 14, 30);
+        doc.text(`${language === 'hi' ? 'Generated At' : 'Generated At'}: ${timeStr}`, 14, 38);
+
+        if (language === 'hi') {
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text("(Note: PDF content is generated in English for better compatibility)", 14, 15);
+            doc.setTextColor(0);
+        }
+
+        if (reportData.length === 0) {
+            doc.text(language === 'hi' ? "No activities found for today." : "No new activities recorded for today.", 14, 50);
+        } else {
+             const tableColumn = ["Time", "Feature", "Action", "Details"];
+             const tableRows = [];
+
+             reportData.forEach(log => {
+                 const activityData = [
+                     log.time,
+                     log.feature,
+                     log.action,
+                     log.details
+                 ];
+                 tableRows.push(activityData);
+             });
+
+             doc.autoTable({
+                 head: [tableColumn],
+                 body: tableRows,
+                 startY: 45,
+                 theme: 'grid',
+                 headStyles: { fillColor: [66, 133, 244] }, // Google blueish
+                 styles: { fontSize: 10, cellPadding: 3 },
+             });
+        }
+
+        doc.save(`daily_report_${new Date().toISOString().split('T')[0]}.pdf`);
     };
 
     if (loading || weatherLoading) {
@@ -149,6 +201,21 @@ const Dashboard = () => {
                     </svg>
                 );
             default:
+                
+                {/* Daily Report Button */}
+                <div className="flex justify-end pt-6">
+                     <button
+                        onClick={handleDownloadReport}
+                        className="flex items-center gap-2 bg-earth-600 hover:bg-earth-700 text-white font-medium py-2 px-4 rounded-lg transition-colors shadow-sm"
+                        title={t('downloadDailyReport')}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        {t('dailyReport')}
+                    </button>
+                </div>
+
                 return (
                     <svg className="w-8 h-8 mx-auto text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
